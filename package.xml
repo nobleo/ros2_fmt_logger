@@ -12,7 +12,9 @@
   <author email="tim.clephas@nobleo.nl">Tim Clephas</author>
 
   <buildtool_depend>ament_cmake_auto</buildtool_depend>
+  <depend>fmt</depend>
   <depend>rclcpp</depend>
+  <depend>rcutils</depend>
 
   <export>
     <build_type>ament_cmake</build_type>

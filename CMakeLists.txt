@@ -20,6 +20,9 @@ target_include_directories(${PROJECT_NAME} INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
 )
+
+# Ensure C++20 features are available
+target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
 # add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 # Install the target
@@ -32,11 +35,11 @@ install(TARGETS ${PROJECT_NAME}
 
 # Install include directory
 install(DIRECTORY include/
-  DESTINATION include/${PROJECT_NAME}
+  DESTINATION include
 )
 
 # Export the target so it can be used by other packages
 ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
-ament_export_dependencies(rclcpp)
+ament_export_dependencies(rclcpp rcutils fmt)
 
 ament_auto_package()
