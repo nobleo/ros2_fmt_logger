@@ -41,6 +41,7 @@ private:
 
   void _fatal(const format_string & format, fmt::format_args args) const
   {
+    RCUTILS_LOGGING_AUTOINIT;
     if (rcutils_logging_logger_is_enabled_for(rcl_logger_.get_name(), RCUTILS_LOG_SEVERITY_FATAL)) {
       rcutils_log_location_t rcutils_location{
         .function_name = format.loc.function_name(),
