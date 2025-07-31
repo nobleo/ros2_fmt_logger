@@ -33,23 +33,42 @@ public:
   template <typename... Args>
   void fatal(const format_string & format, Args &&... args) const
   {
-    _fatal(format, fmt::make_format_args(args...));
+    log(RCUTILS_LOG_SEVERITY_FATAL, format, fmt::make_format_args(args...));
+  }
+
+  template <typename... Args>
+  void fatal_once(const format_string & format, Args &&... args) const
+  {
+    log_once(RCUTILS_LOG_SEVERITY_FATAL, format, fmt::make_format_args(args...));
   }
 
 private:
   rclcpp::Logger rcl_logger_;
 
-  void _fatal(const format_string & format, fmt::format_args args) const
+  void log(
+    const RCUTILS_LOG_SEVERITY severity, const format_string & format,
+    const fmt::format_args & args) const
   {
     RCUTILS_LOGGING_AUTOINIT;
-    if (rcutils_logging_logger_is_enabled_for(rcl_logger_.get_name(), RCUTILS_LOG_SEVERITY_FATAL)) {
+    if (rcutils_logging_logger_is_enabled_for(rcl_logger_.get_name(), severity)) {
       rcutils_log_location_t rcutils_location{
         .function_name = format.loc.function_name(),
         .file_name = format.loc.file_name(),
         .line_number = static_cast<size_t>(format.loc.line())};
       rcutils_log(
-        &rcutils_location, RCUTILS_LOG_SEVERITY_FATAL, rcl_logger_.get_name(), "%s",
+        &rcutils_location, severity, rcl_logger_.get_name(), "%s",
         fmt::vformat(format.str, args).c_str());
+    }
+  }
+
+  void log_once(
+    const RCUTILS_LOG_SEVERITY severity, const format_string & format,
+    const fmt::format_args & args) const
+  {
+    static bool logged = false;
+    if (!logged) {
+      logged = true;
+      log(severity, format, args);
     }
   }
 };
