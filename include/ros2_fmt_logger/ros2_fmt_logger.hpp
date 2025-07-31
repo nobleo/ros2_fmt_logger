@@ -30,6 +30,11 @@ class Logger : public rclcpp::Logger
 public:
   explicit Logger(const rclcpp::Logger & logger) : rclcpp::Logger(logger) {}
 
+  Logger(const rclcpp::Logger & logger, const rclcpp::Clock & clock)
+  : rclcpp::Logger(logger), clock_(clock)
+  {
+  }
+
   template <typename... Args>
   void fatal(const format_string & format, Args &&... args) const
   {
@@ -42,7 +47,17 @@ public:
     log_once(RCUTILS_LOG_SEVERITY_FATAL, format, fmt::make_format_args(args...));
   }
 
+  template <typename... Args>
+  void fatal_throttle(
+    const rclcpp::Duration & duration, const format_string & format, Args &&... args) const
+  {
+    log_throttle(RCUTILS_LOG_SEVERITY_FATAL, duration, format, fmt::make_format_args(args...));
+  }
+
 private:
+  rclcpp::Clock clock_{
+    RCL_STEADY_TIME};  // Default to steady time, can be overridden in constructor
+
   void log(
     const RCUTILS_LOG_SEVERITY severity, const format_string & format,
     const fmt::format_args & args) const
@@ -66,6 +81,23 @@ private:
     if (!logged) {
       logged = true;
       log(severity, format, args);
+    }
+  }
+
+  void log_throttle(
+    const RCUTILS_LOG_SEVERITY severity, const rclcpp::Duration & duration,
+    const format_string & format, const fmt::format_args & args) const
+  {
+    static rclcpp::Time last_logged(static_cast<int64_t>(0), clock_.get_clock_type());
+
+    try {
+      auto now = clock_.now();
+      if ((now - last_logged) >= duration) {
+        last_logged = now;
+        log(severity, format, args);
+      }
+    } catch (...) {
+      // now() can throw, just ignore
     }
   }
 };

@@ -1,6 +1,9 @@
 // Copyright (C) 2025 Nobleo Autonomous Solutions B.V.
 
+#include <chrono>
+#include <iostream>
 #include <rclcpp/rclcpp.hpp>
+#include <thread>
 
 #include "ros2_fmt_logger/ros2_fmt_logger.hpp"
 
@@ -38,6 +41,15 @@ int main(int argc, char ** argv)
   fmt_logger.fatal_once("This message appears only once");
   fmt_logger.fatal_once("This message appears only once");
   fmt_logger.fatal_once("This message appears only once");
+
+  std::cout << "\nThrottle functionality (called 10 times with 500ms throttle):" << std::endl;
+  auto throttle_duration = rclcpp::Duration::from_nanoseconds(500000000);  // 500ms
+  for (int i = 0; i < 10; ++i) {
+    fmt_logger.fatal_throttle(
+      throttle_duration, "Throttled message #{} - only some will appear", i);
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));  // Sleep 200ms between calls
+    std::cout << "Loop iteration " << i << " completed" << std::endl;
+  }
 
   rclcpp::shutdown();
   return EXIT_SUCCESS;

@@ -3,11 +3,16 @@
 #include <gtest/gtest.h>
 #include <rcutils/logging.h>
 
+#include <chrono>
+#include <iostream>
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
 #include <sstream>
+#include <thread>
 
 #include "ros2_fmt_logger/ros2_fmt_logger.hpp"
+
+using std::chrono_literals::operator""ms;
 
 // Custom logging handler to capture log output
 static std::vector<std::pair<int, std::string>> captured_logs;
@@ -88,4 +93,44 @@ TEST_F(Ros2FmtLoggerTest, TestFatalOnceLogging)
   EXPECT_EQ(captured_logs.size(), 1u);
   EXPECT_EQ(captured_logs[0].second, "Test message");
   EXPECT_EQ(captured_logs[0].first, RCUTILS_LOG_SEVERITY_FATAL);
+}
+
+TEST_F(Ros2FmtLoggerTest, TestFatalThrottleLogging)
+{
+  // Clear any previous logs
+  captured_logs.clear();
+
+  // Create a logger with a clock for throttling tests
+  auto clock = rclcpp::Clock{RCL_STEADY_TIME};
+  auto fmt_logger = ros2_fmt_logger::Logger{rcl_logger_, clock};
+
+  auto throttle_duration = 10ms;
+
+  // First call should log immediately
+  fmt_logger.fatal_throttle(throttle_duration, "Throttled message: {}", 1);
+  EXPECT_EQ(captured_logs.size(), 1u);
+  if (captured_logs.size() >= 1) {
+    EXPECT_EQ(captured_logs[0].second, "Throttled message: 1");
+    EXPECT_EQ(captured_logs[0].first, RCUTILS_LOG_SEVERITY_FATAL);
+  }
+
+  // Immediate subsequent calls should be throttled (not logged)
+  fmt_logger.fatal_throttle(throttle_duration, "Throttled message: {}", 2);
+  fmt_logger.fatal_throttle(throttle_duration, "Throttled message: {}", 3);
+  EXPECT_EQ(captured_logs.size(), 1u);  // Still only 1 log entry
+
+  // Wait for throttle duration to pass
+  std::this_thread::sleep_for(20ms);
+
+  // Now it should log again
+  fmt_logger.fatal_throttle(throttle_duration, "Throttled message: {}", 4);
+  EXPECT_EQ(captured_logs.size(), 2u);
+  if (captured_logs.size() >= 2) {
+    EXPECT_EQ(captured_logs[1].second, "Throttled message: 4");
+    EXPECT_EQ(captured_logs[1].first, RCUTILS_LOG_SEVERITY_FATAL);
+  }
+
+  // Immediate call should be throttled again
+  fmt_logger.fatal_throttle(throttle_duration, "Throttled message: {}", 5);
+  EXPECT_EQ(captured_logs.size(), 2u);  // Still only 2 log entries
 }
