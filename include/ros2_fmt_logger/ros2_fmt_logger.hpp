@@ -25,10 +25,10 @@ struct format_string
   }
 };
 
-class Logger
+class Logger : public rclcpp::Logger
 {
 public:
-  explicit Logger(const rclcpp::Logger & logger) : rcl_logger_(logger) {}
+  explicit Logger(const rclcpp::Logger & logger) : rclcpp::Logger(logger) {}
 
   template <typename... Args>
   void fatal(const format_string & format, Args &&... args) const
@@ -43,21 +43,18 @@ public:
   }
 
 private:
-  rclcpp::Logger rcl_logger_;
-
   void log(
     const RCUTILS_LOG_SEVERITY severity, const format_string & format,
     const fmt::format_args & args) const
   {
     RCUTILS_LOGGING_AUTOINIT;
-    if (rcutils_logging_logger_is_enabled_for(rcl_logger_.get_name(), severity)) {
+    if (rcutils_logging_logger_is_enabled_for(get_name(), severity)) {
       rcutils_log_location_t rcutils_location{
         .function_name = format.loc.function_name(),
         .file_name = format.loc.file_name(),
         .line_number = static_cast<size_t>(format.loc.line())};
       rcutils_log(
-        &rcutils_location, severity, rcl_logger_.get_name(), "%s",
-        fmt::vformat(format.str, args).c_str());
+        &rcutils_location, severity, get_name(), "%s", fmt::vformat(format.str, args).c_str());
     }
   }
 

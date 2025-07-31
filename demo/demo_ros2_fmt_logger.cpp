@@ -4,6 +4,17 @@
 
 #include "ros2_fmt_logger/ros2_fmt_logger.hpp"
 
+#define RCLCPP_CUSTOM(logger, ...)                                                     \
+  do {                                                                                 \
+    static_assert(                                                                     \
+      ::std::is_convertible<                                                           \
+        typename std::remove_cv_t<typename std::remove_reference_t<decltype(logger)>>, \
+        typename ::rclcpp::Logger>::value,                                             \
+      "First argument to logging macros must be an rclcpp::Logger");                   \
+                                                                                       \
+    RCUTILS_LOG_FATAL_NAMED((logger).get_name(), __VA_ARGS__);                         \
+  } while (0)
+
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
@@ -16,6 +27,8 @@ int main(int argc, char ** argv)
   std::cout << "Integer formatting:" << std::endl;
   fmt_logger.fatal("Value: {}", 5);
   RCLCPP_FATAL(rcl_logger, "Value: %d", 5);
+  std::cout << "\nUsing RCLCPP macros with the fmt_logger:" << std::endl;
+  RCLCPP_CUSTOM(fmt_logger, "Value: %d", 5);
 
   std::cout << "\nComplex formatting:" << std::endl;
   fmt_logger.fatal("Item {} at ({}, {}) = {:.2f}", 42, 10, 20, 1.2345);
