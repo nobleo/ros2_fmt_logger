@@ -44,11 +44,30 @@ int main(int argc, char ** argv)
 
   std::cout << "\nThrottle functionality (called 10 times with 500ms throttle):" << std::endl;
   auto throttle_duration = rclcpp::Duration::from_nanoseconds(500000000);  // 500ms
-  for (int i = 0; i < 10; ++i) {
+  for (size_t i = 0; i < 10; ++i) {
+    std::cout << "Loop iteration " << i << std::endl;
     fmt_logger.fatal_throttle(
       throttle_duration, "Throttled message #{} - only some will appear", i);
     std::this_thread::sleep_for(std::chrono::milliseconds(200));  // Sleep 200ms between calls
-    std::cout << "Loop iteration " << i << " completed" << std::endl;
+  }
+
+  std::cout << "\nFatal on change functionality (logs only when value changes):" << std::endl;
+
+  // Simulate sensor readings that change over time
+  std::vector<int> sensor_readings = {100, 100, 100, 200, 200, 150, 150, 300};
+  for (const auto reading : sensor_readings) {
+    std::cout << "Sensor reading = " << reading << std::endl;
+    fmt_logger.fatal_on_change(reading, "Sensor reading changed to: {}", reading);
+  }
+
+  std::cout << "\nFatal on change with different types:" << std::endl;
+
+  // Test with floating point values
+  std::cout << "\nFatal on change with floating point values:" << std::endl;
+  std::vector<double> temperatures = {20.5, 20.5, 25.1, 25.1, 30.7, 20.5};
+  for (const auto temperature : temperatures) {
+    std::cout << "Temperature = " << temperature << "°C" << std::endl;
+    fmt_logger.fatal_on_change(temperature, "Temperature changed to: {:.1f}°C", temperature);
   }
 
   rclcpp::shutdown();

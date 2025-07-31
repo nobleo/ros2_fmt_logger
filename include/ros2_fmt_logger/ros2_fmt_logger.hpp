@@ -54,6 +54,16 @@ public:
     log_throttle(RCUTILS_LOG_SEVERITY_FATAL, duration, format, fmt::make_format_args(args...));
   }
 
+  template <typename T, typename... Args>
+  void fatal_on_change(const T value, const format_string & format, Args &&... args) const
+  {
+    static T last_value;
+    if (value != last_value) {
+      last_value = value;
+      log(RCUTILS_LOG_SEVERITY_FATAL, format, fmt::make_format_args(args...));
+    }
+  }
+
 private:
   rclcpp::Clock clock_{
     RCL_STEADY_TIME};  // Default to steady time, can be overridden in constructor

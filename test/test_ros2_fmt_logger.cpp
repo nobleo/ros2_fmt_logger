@@ -134,3 +134,38 @@ TEST_F(Ros2FmtLoggerTest, TestFatalThrottleLogging)
   fmt_logger.fatal_throttle(throttle_duration, "Throttled message: {}", 5);
   EXPECT_EQ(captured_logs.size(), 2u);  // Still only 2 log entries
 }
+
+TEST_F(Ros2FmtLoggerTest, TestFatalOnChangeLogging)
+{
+  // Clear any previous logs
+  captured_logs.clear();
+
+  // Test with integer values
+  int sensor_value = 100;
+
+  // First call should log (initial value)
+  fmt_logger_->fatal_on_change(sensor_value, "Sensor value changed to: {}", sensor_value);
+  EXPECT_EQ(captured_logs.size(), 1u);
+  if (captured_logs.size() >= 1) {
+    EXPECT_EQ(captured_logs[0].second, "Sensor value changed to: 100");
+    EXPECT_EQ(captured_logs[0].first, RCUTILS_LOG_SEVERITY_FATAL);
+  }
+
+  // Same value should not log again
+  fmt_logger_->fatal_on_change(sensor_value, "Sensor value changed to: {}", sensor_value);
+  fmt_logger_->fatal_on_change(sensor_value, "Sensor value changed to: {}", sensor_value);
+  EXPECT_EQ(captured_logs.size(), 1u);  // Still only 1 log entry
+
+  // Different value should log
+  sensor_value = 200;
+  fmt_logger_->fatal_on_change(sensor_value, "Sensor value changed to: {}", sensor_value);
+  EXPECT_EQ(captured_logs.size(), 2u);
+  if (captured_logs.size() >= 2) {
+    EXPECT_EQ(captured_logs[1].second, "Sensor value changed to: 200");
+    EXPECT_EQ(captured_logs[1].first, RCUTILS_LOG_SEVERITY_FATAL);
+  }
+
+  // Same value again should not log
+  fmt_logger_->fatal_on_change(sensor_value, "Sensor value changed to: {}", sensor_value);
+  EXPECT_EQ(captured_logs.size(), 2u);
+}
