@@ -84,15 +84,24 @@ TEST_F(Ros2FmtLoggerTest, TestFatalLoggingEquivalence)
 
 TEST_F(Ros2FmtLoggerTest, TestFatalOnceLogging)
 {
-  // Test the fatal_once functionality
+  // Test the fatal_once functionality. These messages should all appear:
   fmt_logger_->fatal_once("Test message");
   fmt_logger_->fatal_once("Test message");
   fmt_logger_->fatal_once("Test message");
 
   // Should only log once, even when called multiple times
-  EXPECT_EQ(captured_logs.size(), 1u);
+  EXPECT_EQ(captured_logs.size(), 3u);
   EXPECT_EQ(captured_logs[0].second, "Test message");
   EXPECT_EQ(captured_logs[0].first, RCUTILS_LOG_SEVERITY_FATAL);
+
+  // But messages on the same line should not:
+  for (int i = 1; i < 3; ++i) {
+    fmt_logger_->fatal_once("Test loop message");
+  }
+  // Should only log once, even when called multiple times
+  EXPECT_EQ(captured_logs.size(), 4u);
+  EXPECT_EQ(captured_logs[3].second, "Test loop message");
+  EXPECT_EQ(captured_logs[3].first, RCUTILS_LOG_SEVERITY_FATAL);
 }
 
 TEST_F(Ros2FmtLoggerTest, TestFatalThrottleLogging)
