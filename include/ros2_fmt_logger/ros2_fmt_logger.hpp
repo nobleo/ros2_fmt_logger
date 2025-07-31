@@ -28,7 +28,7 @@ struct format_string
 class Logger : public rclcpp::Logger
 {
 public:
-  explicit Logger(const rclcpp::Logger & logger) : rclcpp::Logger(logger) {}
+  explicit Logger(const rclcpp::Logger & logger) : rclcpp::Logger{logger} {}
 
   Logger(const rclcpp::Logger & logger, const rclcpp::Clock & clock)
   : rclcpp::Logger(logger), clock_(clock)
@@ -57,11 +57,15 @@ public:
   template <typename T, typename... Args>
   void fatal_on_change(const T value, const format_string & format, Args &&... args) const
   {
-    static T last_value;
-    if (value != last_value) {
-      last_value = value;
-      log(RCUTILS_LOG_SEVERITY_FATAL, format, fmt::make_format_args(args...));
-    }
+    log_on_change(RCUTILS_LOG_SEVERITY_FATAL, value, format, fmt::make_format_args(args...));
+  }
+
+  template <typename TV, typename TT, typename... Args>
+  void fatal_on_change(
+    const TV & value, const TT & threshold, const format_string & format, Args &&... args) const
+  {
+    log_on_change(
+      RCUTILS_LOG_SEVERITY_FATAL, value, threshold, format, fmt::make_format_args(args...));
   }
 
 private:
@@ -108,6 +112,30 @@ private:
       }
     } catch (...) {
       // now() can throw, just ignore
+    }
+  }
+
+  template <typename T>
+  void log_on_change(
+    const RCUTILS_LOG_SEVERITY severity, const T & value, const format_string & format,
+    const fmt::format_args & args) const
+  {
+    static T last_value;
+    if (value != last_value) {
+      last_value = value;
+      log(severity, format, args);
+    }
+  }
+
+  template <typename TV, typename TT>
+  void log_on_change(
+    const RCUTILS_LOG_SEVERITY severity, const TV & value, const TT & threshold,
+    const format_string & format, const fmt::format_args & args) const
+  {
+    static TV last_value;
+    if ((value - last_value) >= threshold) {
+      last_value = value;
+      log(severity, format, args);
     }
   }
 };

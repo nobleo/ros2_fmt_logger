@@ -58,6 +58,7 @@ int main(int argc, char ** argv)
   for (const auto reading : sensor_readings) {
     std::cout << "Sensor reading = " << reading << std::endl;
     fmt_logger.fatal_on_change(reading, "Sensor reading changed to: {}", reading);
+    fmt_logger.fatal_on_change(reading, 80, "Sensor reading changed significantly to: {}", reading);
   }
 
   std::cout << "\nFatal on change with different types:" << std::endl;
