@@ -42,4 +42,28 @@ install(DIRECTORY include/
 ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 ament_export_dependencies(rclcpp rcutils fmt)
 
+if(BUILD_TESTING)
+  find_package(ament_cmake_gtest REQUIRED)
+  # Unit tests
+  ament_add_gtest(test_ros2_fmt_logger test/test_ros2_fmt_logger.cpp)
+  target_link_libraries(test_ros2_fmt_logger
+    ${PROJECT_NAME}
+    fmt::fmt
+    rclcpp::rclcpp
+    rcutils::rcutils
+  )
+
+  # Demo executable
+  add_executable(demo_ros2_fmt_logger demo/demo_ros2_fmt_logger.cpp)
+  target_link_libraries(demo_ros2_fmt_logger PUBLIC
+    ${PROJECT_NAME}
+    fmt::fmt
+    rclcpp::rclcpp
+    rcutils::rcutils
+  )
+  install(TARGETS demo_ros2_fmt_logger
+    DESTINATION lib/${PROJECT_NAME}
+  )
+endif()
+
 ament_auto_package()

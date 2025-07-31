@@ -1,0 +1,31 @@
+// Copyright (C) 2025 Nobleo Autonomous Solutions B.V.
+
+#include <rclcpp/rclcpp.hpp>
+
+#include "ros2_fmt_logger/ros2_fmt_logger.hpp"
+
+int main(int argc, char ** argv)
+{
+  rclcpp::init(argc, argv);
+  auto node = rclcpp::Node::make_shared("demo_node");
+  auto rcl_logger = node->get_logger();
+  auto fmt_logger = ros2_fmt_logger::Logger(rcl_logger);
+
+  std::cout << "\n=== Demonstrating equivalent logging outputs ===\n" << std::endl;
+
+  std::cout << "Integer formatting:" << std::endl;
+  fmt_logger.fatal("Value: {}", 5);
+  RCLCPP_FATAL(rcl_logger, "Value: %d", 5);
+
+  std::cout << "\nComplex formatting:" << std::endl;
+  fmt_logger.fatal("Item {} at ({}, {}) = {:.2f}", 42, 10, 20, 1.2345);
+  RCLCPP_FATAL(rcl_logger, "Item %d at (%d, %d) = %.2f", 42, 10, 20, 1.2345);
+
+  std::cout << "\nFatal once functionality (called 3 times, should only log once):" << std::endl;
+  fmt_logger.fatal_once("This message appears only once");
+  fmt_logger.fatal_once("This message appears only once");
+  fmt_logger.fatal_once("This message appears only once");
+
+  rclcpp::shutdown();
+  return EXIT_SUCCESS;
+}
