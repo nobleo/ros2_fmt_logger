@@ -44,7 +44,7 @@ public:
   template <typename... Args, typename Unique = decltype([] {})>
   void fatal_once(const format_string & format, Args &&... args, Unique = {}) const
   {
-    log_once(RCUTILS_LOG_SEVERITY_FATAL, format, fmt::make_format_args(args...));
+    log_once<Unique>(RCUTILS_LOG_SEVERITY_FATAL, format, fmt::make_format_args(args...));
   }
 
   template <typename... Args>
@@ -87,10 +87,10 @@ private:
     }
   }
 
-  template <typename Unique = decltype([] {})>
+  template <typename Unique>
   void log_once(
     const RCUTILS_LOG_SEVERITY severity, const format_string & format,
-    const fmt::format_args & args, Unique = {}) const
+    const fmt::format_args & args) const
   {
     static bool already_logged = false;
     if (!already_logged) {
