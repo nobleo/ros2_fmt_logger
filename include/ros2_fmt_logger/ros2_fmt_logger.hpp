@@ -55,17 +55,18 @@ public:
       RCUTILS_LOG_SEVERITY_FATAL, duration, format, fmt::make_format_args(args...));
   }
 
-  template <typename T, typename... Args>
+  template <typename T, typename... Args, typename Unique = decltype([] {})>
   void fatal_on_change(const T value, const format_string & format, Args &&... args) const
   {
-    log_on_change(RCUTILS_LOG_SEVERITY_FATAL, value, format, fmt::make_format_args(args...));
+    log_on_change<T, Unique>(
+      RCUTILS_LOG_SEVERITY_FATAL, value, format, fmt::make_format_args(args...));
   }
 
-  template <typename TV, typename TT, typename... Args>
+  template <typename TV, typename TT, typename... Args, typename Unique = decltype([] {})>
   void fatal_on_change(
     const TV & value, const TT & threshold, const format_string & format, Args &&... args) const
   {
-    log_on_change(
+    log_on_change<TV, TT, Unique>(
       RCUTILS_LOG_SEVERITY_FATAL, value, threshold, format, fmt::make_format_args(args...));
   }
 
@@ -118,7 +119,7 @@ private:
     }
   }
 
-  template <typename T>
+  template <typename T, typename Unique>
   void log_on_change(
     const RCUTILS_LOG_SEVERITY severity, const T & value, const format_string & format,
     const fmt::format_args & args) const
@@ -130,7 +131,7 @@ private:
     }
   }
 
-  template <typename TV, typename TT>
+  template <typename TV, typename TT, typename Unique>
   void log_on_change(
     const RCUTILS_LOG_SEVERITY severity, const TV & value, const TT & threshold,
     const format_string & format, const fmt::format_args & args) const
