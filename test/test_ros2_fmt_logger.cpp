@@ -113,10 +113,13 @@ TEST_F(Ros2FmtLoggerTest, TestFatalThrottleLogging)
   auto clock = rclcpp::Clock{RCL_STEADY_TIME};
   auto fmt_logger = ros2_fmt_logger::Logger{rcl_logger_, clock};
 
-  auto throttle_duration = 10ms;
+  auto log = [&fmt_logger](int i) {
+    // Creating a function to make sure all calls in this test are from the came line of code
+    fmt_logger.fatal_throttle(10ms, "Throttled message: {}", i);
+  };
 
   // First call should log immediately
-  fmt_logger.fatal_throttle(throttle_duration, "Throttled message: {}", 1);
+  log(1);
   EXPECT_EQ(captured_logs.size(), 1u);
   if (captured_logs.size() >= 1) {
     EXPECT_EQ(captured_logs[0].second, "Throttled message: 1");
@@ -124,15 +127,15 @@ TEST_F(Ros2FmtLoggerTest, TestFatalThrottleLogging)
   }
 
   // Immediate subsequent calls should be throttled (not logged)
-  fmt_logger.fatal_throttle(throttle_duration, "Throttled message: {}", 2);
-  fmt_logger.fatal_throttle(throttle_duration, "Throttled message: {}", 3);
+  log(2);
+  log(3);
   EXPECT_EQ(captured_logs.size(), 1u);  // Still only 1 log entry
 
   // Wait for throttle duration to pass
   std::this_thread::sleep_for(20ms);
 
   // Now it should log again
-  fmt_logger.fatal_throttle(throttle_duration, "Throttled message: {}", 4);
+  log(4);
   EXPECT_EQ(captured_logs.size(), 2u);
   if (captured_logs.size() >= 2) {
     EXPECT_EQ(captured_logs[1].second, "Throttled message: 4");
@@ -140,7 +143,7 @@ TEST_F(Ros2FmtLoggerTest, TestFatalThrottleLogging)
   }
 
   // Immediate call should be throttled again
-  fmt_logger.fatal_throttle(throttle_duration, "Throttled message: {}", 5);
+  log(5);
   EXPECT_EQ(captured_logs.size(), 2u);  // Still only 2 log entries
 }
 

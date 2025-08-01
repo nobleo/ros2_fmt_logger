@@ -42,16 +42,17 @@ public:
   }
 
   template <typename... Args, typename Unique = decltype([] {})>
-  void fatal_once(const format_string & format, Args &&... args, Unique = {}) const
+  void fatal_once(const format_string & format, Args &&... args) const
   {
     log_once<Unique>(RCUTILS_LOG_SEVERITY_FATAL, format, fmt::make_format_args(args...));
   }
 
-  template <typename... Args>
+  template <typename... Args, typename Unique = decltype([] {})>
   void fatal_throttle(
     const rclcpp::Duration & duration, const format_string & format, Args &&... args) const
   {
-    log_throttle(RCUTILS_LOG_SEVERITY_FATAL, duration, format, fmt::make_format_args(args...));
+    log_throttle<Unique>(
+      RCUTILS_LOG_SEVERITY_FATAL, duration, format, fmt::make_format_args(args...));
   }
 
   template <typename T, typename... Args>
@@ -99,6 +100,7 @@ private:
     }
   }
 
+  template <typename Unique>
   void log_throttle(
     const RCUTILS_LOG_SEVERITY severity, const rclcpp::Duration & duration,
     const format_string & format, const fmt::format_args & args) const

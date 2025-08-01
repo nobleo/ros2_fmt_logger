@@ -30,13 +30,15 @@ int main(int argc, char ** argv)
 
   std::cout << "\nFatal once functionality (called 3 times, should only log once):" << std::endl;
   for (int i = 0; i < 3; ++i) {
-    fmt_logger.fatal_once("This message appears only once");
+    fmt_logger.fatal_once("This message appears only once: {}", i);
+    fmt_logger.fatal_once("This one only once as well: {}", i);
   }
 
   std::cout << "\nThrottle functionality (called 10 times with 500ms throttle):" << std::endl;
   for (size_t i = 0; i < 10; ++i) {
     std::cout << "Loop iteration " << i << std::endl;
     fmt_logger.fatal_throttle(500ms, "Throttled message #{} - only some will appear", i);
+    fmt_logger.fatal_throttle(500ms, "Logging twice: {}", i);
     std::this_thread::sleep_for(std::chrono::milliseconds(200));  // Sleep 200ms between calls
   }
 
@@ -58,6 +60,7 @@ int main(int argc, char ** argv)
   for (const auto temperature : temperatures) {
     std::cout << "Temperature = " << temperature << "°C" << std::endl;
     fmt_logger.fatal_on_change(temperature, "Temperature changed to: {:.1f}°C", temperature);
+    fmt_logger.fatal_on_change(temperature, "Also temp changed to: {:.1f}°C", temperature);
   }
 
   rclcpp::shutdown();
