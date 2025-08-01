@@ -155,8 +155,12 @@ TEST_F(Ros2FmtLoggerTest, TestFatalOnChangeLogging)
   // Test with integer values
   int sensor_value = 100;
 
+  auto log = [&fmt_logger = fmt_logger_](int value) {
+    fmt_logger->fatal_on_change(value, "Sensor value changed to: {}", value);
+  };
+
   // First call should log (initial value)
-  fmt_logger_->fatal_on_change(sensor_value, "Sensor value changed to: {}", sensor_value);
+  log(sensor_value);
   EXPECT_EQ(captured_logs.size(), 1u);
   if (captured_logs.size() >= 1) {
     EXPECT_EQ(captured_logs[0].second, "Sensor value changed to: 100");
@@ -164,13 +168,13 @@ TEST_F(Ros2FmtLoggerTest, TestFatalOnChangeLogging)
   }
 
   // Same value should not log again
-  fmt_logger_->fatal_on_change(sensor_value, "Sensor value changed to: {}", sensor_value);
-  fmt_logger_->fatal_on_change(sensor_value, "Sensor value changed to: {}", sensor_value);
+  log(sensor_value);
+  log(sensor_value);
   EXPECT_EQ(captured_logs.size(), 1u);  // Still only 1 log entry
 
   // Different value should log
   sensor_value = 200;
-  fmt_logger_->fatal_on_change(sensor_value, "Sensor value changed to: {}", sensor_value);
+  log(sensor_value);
   EXPECT_EQ(captured_logs.size(), 2u);
   if (captured_logs.size() >= 2) {
     EXPECT_EQ(captured_logs[1].second, "Sensor value changed to: 200");
@@ -178,7 +182,7 @@ TEST_F(Ros2FmtLoggerTest, TestFatalOnChangeLogging)
   }
 
   // Same value again should not log
-  fmt_logger_->fatal_on_change(sensor_value, "Sensor value changed to: {}", sensor_value);
+  log(sensor_value);
   EXPECT_EQ(captured_logs.size(), 2u);
 }
 
@@ -191,9 +195,13 @@ TEST_F(Ros2FmtLoggerTest, TestFatalOnChangeWithThreshold)
   double temperature = 20.0;
   double threshold = 5.0;  // Only log when change is >= 5.0 degrees
 
+  auto log = [&fmt_logger = fmt_logger_, threshold](double value) {
+    fmt_logger->fatal_on_change(
+      value, threshold, "Temperature: {:.1f}°C (threshold: {:.1f})", value, threshold);
+  };
+
   // First call should always log (initial value)
-  fmt_logger_->fatal_on_change(
-    temperature, threshold, "Temperature: {:.1f}°C (threshold: {:.1f})", temperature, threshold);
+  log(temperature);
   EXPECT_EQ(captured_logs.size(), 1u);
   if (captured_logs.size() >= 1) {
     EXPECT_EQ(captured_logs[0].second, "Temperature: 20.0°C (threshold: 5.0)");
@@ -202,14 +210,12 @@ TEST_F(Ros2FmtLoggerTest, TestFatalOnChangeWithThreshold)
 
   // Small changes below threshold should not log
   temperature = 24.0;  // Change of 4.0 total, still below threshold
-  fmt_logger_->fatal_on_change(
-    temperature, threshold, "Temperature: {:.1f}°C (threshold: {:.1f})", temperature, threshold);
+  log(temperature);
   EXPECT_EQ(captured_logs.size(), 1u);  // Still only 1 log entry
 
   // Large change meeting threshold should log
   temperature = 25.5;  // Change of 5.5 from last logged (20.0), above threshold
-  fmt_logger_->fatal_on_change(
-    temperature, threshold, "Temperature: {:.1f}°C (threshold: {:.1f})", temperature, threshold);
+  log(temperature);
   EXPECT_EQ(captured_logs.size(), 2u);
   if (captured_logs.size() >= 2) {
     EXPECT_EQ(captured_logs[1].second, "Temperature: 25.5°C (threshold: 5.0)");
@@ -218,14 +224,12 @@ TEST_F(Ros2FmtLoggerTest, TestFatalOnChangeWithThreshold)
 
   // Small change from new baseline should not log
   temperature = 27.0;  // Change of 1.5 from last logged (25.5), below threshold
-  fmt_logger_->fatal_on_change(
-    temperature, threshold, "Temperature: {:.1f}°C (threshold: {:.1f})", temperature, threshold);
+  log(temperature);
   EXPECT_EQ(captured_logs.size(), 2u);  // Still only 2 log entries
 
   // Another large change should log
   temperature = 31.0;  // Change of 5.5 from last logged (25.5), above threshold
-  fmt_logger_->fatal_on_change(
-    temperature, threshold, "Temperature: {:.1f}°C (threshold: {:.1f})", temperature, threshold);
+  log(temperature);
   EXPECT_EQ(captured_logs.size(), 3u);
   if (captured_logs.size() >= 3) {
     EXPECT_EQ(captured_logs[2].second, "Temperature: 31.0°C (threshold: 5.0)");
