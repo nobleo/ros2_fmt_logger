@@ -7,16 +7,7 @@
 
 #include "ros2_fmt_logger/ros2_fmt_logger.hpp"
 
-#define RCLCPP_CUSTOM(logger, ...)                                                     \
-  do {                                                                                 \
-    static_assert(                                                                     \
-      ::std::is_convertible<                                                           \
-        typename std::remove_cv_t<typename std::remove_reference_t<decltype(logger)>>, \
-        typename ::rclcpp::Logger>::value,                                             \
-      "First argument to logging macros must be an rclcpp::Logger");                   \
-                                                                                       \
-    RCUTILS_LOG_FATAL_NAMED((logger).get_name(), __VA_ARGS__);                         \
-  } while (0)
+using std::chrono_literals::operator""ms;
 
 int main(int argc, char ** argv)
 {
@@ -30,24 +21,22 @@ int main(int argc, char ** argv)
   std::cout << "Integer formatting:" << std::endl;
   fmt_logger.fatal("Value: {}", 5);
   RCLCPP_FATAL(rcl_logger, "Value: %d", 5);
-  std::cout << "\nUsing RCLCPP macros with the fmt_logger:" << std::endl;
-  RCLCPP_CUSTOM(fmt_logger, "Value: %d", 5);
+  // std::cout << "\nUsing RCLCPP macros with the fmt_logger:" << std::endl;
+  // RCLCPP_FATAL(fmt_logger, "Value: %d", 5);
 
   std::cout << "\nComplex formatting:" << std::endl;
   fmt_logger.fatal("Item {} at ({}, {}) = {:.2f}", 42, 10, 20, 1.2345);
   RCLCPP_FATAL(rcl_logger, "Item %d at (%d, %d) = %.2f", 42, 10, 20, 1.2345);
 
   std::cout << "\nFatal once functionality (called 3 times, should only log once):" << std::endl;
-  fmt_logger.fatal_once("This message appears only once");
-  fmt_logger.fatal_once("This message appears only once");
-  fmt_logger.fatal_once("This message appears only once");
+  for (int i = 0; i < 3; ++i) {
+    fmt_logger.fatal_once("This message appears only once");
+  }
 
   std::cout << "\nThrottle functionality (called 10 times with 500ms throttle):" << std::endl;
-  auto throttle_duration = rclcpp::Duration::from_nanoseconds(500000000);  // 500ms
   for (size_t i = 0; i < 10; ++i) {
     std::cout << "Loop iteration " << i << std::endl;
-    fmt_logger.fatal_throttle(
-      throttle_duration, "Throttled message #{} - only some will appear", i);
+    fmt_logger.fatal_throttle(500ms, "Throttled message #{} - only some will appear", i);
     std::this_thread::sleep_for(std::chrono::milliseconds(200));  // Sleep 200ms between calls
   }
 
@@ -58,7 +47,7 @@ int main(int argc, char ** argv)
   for (const auto reading : sensor_readings) {
     std::cout << "Sensor reading = " << reading << std::endl;
     fmt_logger.fatal_on_change(reading, "Sensor reading changed to: {}", reading);
-    fmt_logger.fatal_on_change(reading, 80, "Sensor reading changed significantly to: {}", reading);
+    // fmt_logger.fatal_on_change(reading, 80, "Sensor reading changed significantly to: {}", reading);
   }
 
   std::cout << "\nFatal on change with different types:" << std::endl;
