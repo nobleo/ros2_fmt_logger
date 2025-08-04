@@ -21,6 +21,7 @@ int main(int argc, char ** argv)
   std::cout << "Integer formatting:" << std::endl;
   fmt_logger.fatal("Value: {}", 5);
   RCLCPP_FATAL(rcl_logger, "Value: %d", 5);
+  // After: https://github.com/ros2/rclcpp/pull/2922
   // std::cout << "\nUsing RCLCPP macros with the fmt_logger:" << std::endl;
   // RCLCPP_FATAL(fmt_logger, "Value: %d", 5);
 
@@ -61,6 +62,8 @@ int main(int argc, char ** argv)
     std::cout << "Temperature = " << temperature << "°C" << std::endl;
     fmt_logger.fatal_on_change(temperature, "Temperature changed to: {:.1f}°C", temperature);
     fmt_logger.fatal_on_change(temperature, "Also temp changed to: {:.1f}°C", temperature);
+    fmt_logger.fatal_on_change(
+      temperature, 10.0, "Temperature changed significantly (> 10.0): {:.1f}°C", temperature);
   }
 
   rclcpp::shutdown();
