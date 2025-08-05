@@ -5,6 +5,7 @@
 #include <fmt/format.h>
 #include <rcutils/logging.h>
 
+#include <rclcpp/clock.hpp>
 #include <rclcpp/logger.hpp>
 #include <source_location>
 #include <string>
@@ -33,6 +34,146 @@ public:
   Logger(const rclcpp::Logger & logger, const rclcpp::Clock & clock)
   : rclcpp::Logger(logger), clock_(clock)
   {
+  }
+
+  template <typename... Args>
+  void debug(const format_string & format, Args &&... args) const
+  {
+    log(RCUTILS_LOG_SEVERITY_DEBUG, format, fmt::make_format_args(args...));
+  }
+
+  template <typename... Args, typename Unique = decltype([] {})>
+  void debug_once(const format_string & format, Args &&... args) const
+  {
+    log_once<Unique>(RCUTILS_LOG_SEVERITY_DEBUG, format, fmt::make_format_args(args...));
+  }
+
+  template <typename... Args, typename Unique = decltype([] {})>
+  void debug_throttle(
+    const rclcpp::Duration & duration, const format_string & format, Args &&... args) const
+  {
+    log_throttle<Unique>(
+      RCUTILS_LOG_SEVERITY_DEBUG, duration, format, fmt::make_format_args(args...));
+  }
+
+  template <typename T, typename... Args, typename Unique = decltype([] {})>
+  void debug_on_change(const T value, const format_string & format, Args &&... args) const
+  {
+    log_on_change<T, Unique>(
+      RCUTILS_LOG_SEVERITY_DEBUG, value, format, fmt::make_format_args(args...));
+  }
+
+  template <typename TV, typename TT, typename... Args, typename Unique = decltype([] {})>
+  void debug_on_change(
+    const TV & value, const TT & threshold, const format_string & format, Args &&... args) const
+  {
+    log_on_change<TV, TT, Unique>(
+      RCUTILS_LOG_SEVERITY_DEBUG, value, threshold, format, fmt::make_format_args(args...));
+  }
+
+  template <typename... Args>
+  void info(const format_string & format, Args &&... args) const
+  {
+    log(RCUTILS_LOG_SEVERITY_INFO, format, fmt::make_format_args(args...));
+  }
+
+  template <typename... Args, typename Unique = decltype([] {})>
+  void info_once(const format_string & format, Args &&... args) const
+  {
+    log_once<Unique>(RCUTILS_LOG_SEVERITY_INFO, format, fmt::make_format_args(args...));
+  }
+
+  template <typename... Args, typename Unique = decltype([] {})>
+  void info_throttle(
+    const rclcpp::Duration & duration, const format_string & format, Args &&... args) const
+  {
+    log_throttle<Unique>(
+      RCUTILS_LOG_SEVERITY_INFO, duration, format, fmt::make_format_args(args...));
+  }
+
+  template <typename T, typename... Args, typename Unique = decltype([] {})>
+  void info_on_change(const T value, const format_string & format, Args &&... args) const
+  {
+    log_on_change<T, Unique>(
+      RCUTILS_LOG_SEVERITY_INFO, value, format, fmt::make_format_args(args...));
+  }
+
+  template <typename TV, typename TT, typename... Args, typename Unique = decltype([] {})>
+  void info_on_change(
+    const TV & value, const TT & threshold, const format_string & format, Args &&... args) const
+  {
+    log_on_change<TV, TT, Unique>(
+      RCUTILS_LOG_SEVERITY_INFO, value, threshold, format, fmt::make_format_args(args...));
+  }
+
+  template <typename... Args>
+  void warn(const format_string & format, Args &&... args) const
+  {
+    log(RCUTILS_LOG_SEVERITY_WARN, format, fmt::make_format_args(args...));
+  }
+
+  template <typename... Args, typename Unique = decltype([] {})>
+  void warn_once(const format_string & format, Args &&... args) const
+  {
+    log_once<Unique>(RCUTILS_LOG_SEVERITY_WARN, format, fmt::make_format_args(args...));
+  }
+
+  template <typename... Args, typename Unique = decltype([] {})>
+  void warn_throttle(
+    const rclcpp::Duration & duration, const format_string & format, Args &&... args) const
+  {
+    log_throttle<Unique>(
+      RCUTILS_LOG_SEVERITY_WARN, duration, format, fmt::make_format_args(args...));
+  }
+
+  template <typename T, typename... Args, typename Unique = decltype([] {})>
+  void warn_on_change(const T value, const format_string & format, Args &&... args) const
+  {
+    log_on_change<T, Unique>(
+      RCUTILS_LOG_SEVERITY_WARN, value, format, fmt::make_format_args(args...));
+  }
+
+  template <typename TV, typename TT, typename... Args, typename Unique = decltype([] {})>
+  void warn_on_change(
+    const TV & value, const TT & threshold, const format_string & format, Args &&... args) const
+  {
+    log_on_change<TV, TT, Unique>(
+      RCUTILS_LOG_SEVERITY_WARN, value, threshold, format, fmt::make_format_args(args...));
+  }
+
+  template <typename... Args>
+  void error(const format_string & format, Args &&... args) const
+  {
+    log(RCUTILS_LOG_SEVERITY_ERROR, format, fmt::make_format_args(args...));
+  }
+
+  template <typename... Args, typename Unique = decltype([] {})>
+  void error_once(const format_string & format, Args &&... args) const
+  {
+    log_once<Unique>(RCUTILS_LOG_SEVERITY_ERROR, format, fmt::make_format_args(args...));
+  }
+
+  template <typename... Args, typename Unique = decltype([] {})>
+  void error_throttle(
+    const rclcpp::Duration & duration, const format_string & format, Args &&... args) const
+  {
+    log_throttle<Unique>(
+      RCUTILS_LOG_SEVERITY_ERROR, duration, format, fmt::make_format_args(args...));
+  }
+
+  template <typename T, typename... Args, typename Unique = decltype([] {})>
+  void error_on_change(const T value, const format_string & format, Args &&... args) const
+  {
+    log_on_change<T, Unique>(
+      RCUTILS_LOG_SEVERITY_ERROR, value, format, fmt::make_format_args(args...));
+  }
+
+  template <typename TV, typename TT, typename... Args, typename Unique = decltype([] {})>
+  void error_on_change(
+    const TV & value, const TT & threshold, const format_string & format, Args &&... args) const
+  {
+    log_on_change<TV, TT, Unique>(
+      RCUTILS_LOG_SEVERITY_ERROR, value, threshold, format, fmt::make_format_args(args...));
   }
 
   template <typename... Args>
