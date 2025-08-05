@@ -99,8 +99,7 @@ public:
    * }
    * @endcode
    */
-  template <typename... Args, typename Unique = decltype([] {
-                              })>  // Unique type to ensure single instance per call
+  template <typename... Args, typename Unique = decltype([]() { /*single instance per call*/ })>
   void debug_once(const format_string & format, Args &&... args) const
   {
     log_once<Unique>(RCUTILS_LOG_SEVERITY_DEBUG, format, fmt::make_format_args(args...));
@@ -121,7 +120,7 @@ public:
    * logger.debug_throttle(1s, "Loop iteration {}", i);
    * @endcode
    */
-  template <typename... Args, typename Unique = decltype([] {})>
+  template <typename... Args, typename Unique = decltype([]() { /*single instance per call*/ })>
   void debug_throttle(
     const rclcpp::Duration & duration, const format_string & format, Args &&... args) const
   {
@@ -144,7 +143,7 @@ public:
    * logger.debug_on_change(sensor_reading, "Sensor: {:.2f}", sensor_reading);
    * @endcode
    */
-  template <typename T, typename... Args, typename Unique = decltype([] {})>
+  template <typename T, typename... Args, typename Unique = decltype([]() { /*single instance*/ })>
   void debug_on_change(const T value, const format_string & format, Args &&... args) const
   {
     log_on_change<T, Unique>(
@@ -167,7 +166,8 @@ public:
    * logger.debug_on_change(position, 0.1, "Position: {:.2f}m", position);
    * @endcode
    */
-  template <typename TV, typename TT, typename... Args, typename Unique = decltype([] {})>
+  template <
+    typename TV, typename TT, typename... Args, typename Unique = decltype([]() { /*single*/ })>
   void debug_on_change(
     const TV & value, const TT & threshold, const format_string & format, Args &&... args) const
   {
@@ -205,7 +205,7 @@ public:
    * logger.info_once("System initialization complete");
    * @endcode
    */
-  template <typename... Args, typename Unique = decltype([] {})>
+  template <typename... Args, typename Unique = decltype([]() { /*single instance per call*/ })>
   void info_once(const format_string & format, Args &&... args) const
   {
     log_once<Unique>(RCUTILS_LOG_SEVERITY_INFO, format, fmt::make_format_args(args...));
@@ -222,7 +222,7 @@ public:
    * logger.info_throttle(5s, "System status: {} items processed", count);
    * @endcode
    */
-  template <typename... Args, typename Unique = decltype([] {})>
+  template <typename... Args, typename Unique = decltype([]() { /*single instance per call*/ })>
   void info_throttle(
     const rclcpp::Duration & duration, const format_string & format, Args &&... args) const
   {
@@ -241,7 +241,7 @@ public:
    * logger.info_on_change(current_state, "State transition to: {}", current_state);
    * @endcode
    */
-  template <typename T, typename... Args, typename Unique = decltype([] {})>
+  template <typename T, typename... Args, typename Unique = decltype([]() { /*single instance*/ })>
   void info_on_change(const T value, const format_string & format, Args &&... args) const
   {
     log_on_change<T, Unique>(
@@ -260,7 +260,8 @@ public:
    * logger.info_on_change(progress, 0.1, "Progress: {:.1%}", progress);
    * @endcode
    */
-  template <typename TV, typename TT, typename... Args, typename Unique = decltype([] {})>
+  template <
+    typename TV, typename TT, typename... Args, typename Unique = decltype([]() { /*single*/ })>
   void info_on_change(
     const TV & value, const TT & threshold, const format_string & format, Args &&... args) const
   {
@@ -298,7 +299,7 @@ public:
    * logger.warn_once("Deprecated API usage detected");
    * @endcode
    */
-  template <typename... Args, typename Unique = decltype([] {})>
+  template <typename... Args, typename Unique = decltype([]() { /*single instance per call*/ })>
   void warn_once(const format_string & format, Args &&... args) const
   {
     log_once<Unique>(RCUTILS_LOG_SEVERITY_WARN, format, fmt::make_format_args(args...));
@@ -315,7 +316,7 @@ public:
    * logger.warn_throttle(1s, "High memory usage: {:.1f} MB", memory_mb);
    * @endcode
    */
-  template <typename... Args, typename Unique = decltype([] {})>
+  template <typename... Args, typename Unique = decltype([]() { /*single instance per call*/ })>
   void warn_throttle(
     const rclcpp::Duration & duration, const format_string & format, Args &&... args) const
   {
@@ -334,7 +335,7 @@ public:
    * logger.warn_on_change(error_count, "Error count changed: {}", error_count);
    * @endcode
    */
-  template <typename T, typename... Args, typename Unique = decltype([] {})>
+  template <typename T, typename... Args, typename Unique = decltype([]() { /*single instance*/ })>
   void warn_on_change(const T value, const format_string & format, Args &&... args) const
   {
     log_on_change<T, Unique>(
@@ -353,7 +354,8 @@ public:
    * logger.warn_on_change(latency_ms, 50.0, "High latency: {:.1f}ms", latency_ms);
    * @endcode
    */
-  template <typename TV, typename TT, typename... Args, typename Unique = decltype([] {})>
+  template <
+    typename TV, typename TT, typename... Args, typename Unique = decltype([]() { /*single*/ })>
   void warn_on_change(
     const TV & value, const TT & threshold, const format_string & format, Args &&... args) const
   {
@@ -392,7 +394,7 @@ public:
    * logger.error_once("Configuration file missing");
    * @endcode
    */
-  template <typename... Args, typename Unique = decltype([] {})>
+  template <typename... Args, typename Unique = decltype([]() { /*single instance per call*/ })>
   void error_once(const format_string & format, Args &&... args) const
   {
     log_once<Unique>(RCUTILS_LOG_SEVERITY_ERROR, format, fmt::make_format_args(args...));
@@ -409,7 +411,7 @@ public:
    * logger.error_throttle(1s, "Connection lost to {}", device_name);
    * @endcode
    */
-  template <typename... Args, typename Unique = decltype([] {})>
+  template <typename... Args, typename Unique = decltype([]() { /*single instance per call*/ })>
   void error_throttle(
     const rclcpp::Duration & duration, const format_string & format, Args &&... args) const
   {
@@ -428,7 +430,7 @@ public:
    * logger.error_on_change(error_state, "System error state: {}", error_state);
    * @endcode
    */
-  template <typename T, typename... Args, typename Unique = decltype([] {})>
+  template <typename T, typename... Args, typename Unique = decltype([]() { /*single instance*/ })>
   void error_on_change(const T value, const format_string & format, Args &&... args) const
   {
     log_on_change<T, Unique>(
@@ -447,7 +449,8 @@ public:
    * logger.error_on_change(error_rate, 0.05, "Error rate spike: {:.2%}", error_rate);
    * @endcode
    */
-  template <typename TV, typename TT, typename... Args, typename Unique = decltype([] {})>
+  template <
+    typename TV, typename TT, typename... Args, typename Unique = decltype([]() { /*single*/ })>
   void error_on_change(
     const TV & value, const TT & threshold, const format_string & format, Args &&... args) const
   {
@@ -486,7 +489,7 @@ public:
    * logger.fatal_once("Critical configuration error detected");
    * @endcode
    */
-  template <typename... Args, typename Unique = decltype([] {})>
+  template <typename... Args, typename Unique = decltype([]() { /*single instance per call*/ })>
   void fatal_once(const format_string & format, Args &&... args) const
   {
     log_once<Unique>(RCUTILS_LOG_SEVERITY_FATAL, format, fmt::make_format_args(args...));
@@ -503,7 +506,7 @@ public:
    * logger.fatal_throttle(1s, "Critical system overload detected");
    * @endcode
    */
-  template <typename... Args, typename Unique = decltype([] {})>
+  template <typename... Args, typename Unique = decltype([]() { /*single instance per call*/ })>
   void fatal_throttle(
     const rclcpp::Duration & duration, const format_string & format, Args &&... args) const
   {
@@ -522,7 +525,7 @@ public:
    * logger.fatal_on_change(critical_system_state, "Critical state change: {}", critical_system_state);
    * @endcode
    */
-  template <typename T, typename... Args, typename Unique = decltype([] {})>
+  template <typename T, typename... Args, typename Unique = decltype([]() { /*single instance*/ })>
   void fatal_on_change(const T value, const format_string & format, Args &&... args) const
   {
     log_on_change<T, Unique>(
@@ -541,7 +544,8 @@ public:
    * logger.fatal_on_change(system_load, 0.95, "System overload: {:.1%}", system_load);
    * @endcode
    */
-  template <typename TV, typename TT, typename... Args, typename Unique = decltype([] {})>
+  template <
+    typename TV, typename TT, typename... Args, typename Unique = decltype([]() { /*single*/ })>
   void fatal_on_change(
     const TV & value, const TT & threshold, const format_string & format, Args &&... args) const
   {
@@ -622,8 +626,9 @@ private:
         last_logged = now;
         log(severity, format, args);
       }
-    } catch (...) {
-      // now() can throw, just ignore
+    } catch (const std::exception & ex) {  // now() can throw
+      log(RCUTILS_LOG_SEVERITY_ERROR, format_string("{}"), fmt::make_format_args(ex.what()));
+      log(severity, format, args);
     }
   }
 
