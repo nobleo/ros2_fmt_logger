@@ -23,7 +23,6 @@ target_include_directories(${PROJECT_NAME} INTERFACE
 
 # Ensure C++20 features are available
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
-# add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 # Install the target
 install(TARGETS ${PROJECT_NAME}

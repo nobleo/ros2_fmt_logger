@@ -6,7 +6,9 @@
 <package format="3">
   <name>ros2_fmt_logger</name>
   <version>25.5.0</version>
-  <description>TODO: Package description</description>
+  <description>
+    A modern, ROS 2 logging library that provides fmt-style formatting as a replacement for RCLCPP logging macros
+  </description>
   <maintainer email="tim.clephas@nobleo.nl">Tim Clephas</maintainer>
   <license>TODO</license>
   <author email="tim.clephas@nobleo.nl">Tim Clephas</author>
