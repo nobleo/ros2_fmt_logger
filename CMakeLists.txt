@@ -66,4 +66,8 @@ if(BUILD_TESTING)
   )
 endif()
 
-ament_auto_package()
+if($ENV{ROS_DISTRO} STREQUAL "jazzy")  # Can be removed after Jazzy EOL or https://github.com/ament/ament_cmake/pull/596
+  ament_auto_package(USE_SCOPED_HEADER_INSTALL_DIR)
+else()
+  ament_auto_package()
+endif()
