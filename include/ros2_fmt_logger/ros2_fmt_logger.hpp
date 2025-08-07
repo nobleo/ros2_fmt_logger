@@ -18,7 +18,7 @@ namespace ros2_fmt_logger
 {
 
 /**
- * @struct format_and_loc
+ * @struct format_with_loc
  * @brief A wrapper for format strings that automatically captures source location
  *
  * This struct combines a format string with source location information for debugging.
@@ -26,12 +26,12 @@ namespace ros2_fmt_logger
  * This is required to have a single first argument as the number of arguments for all functions
  * is dynamic.
  */
-struct format_and_loc
+struct format_with_loc
 {
   std::string_view str;
   std::source_location loc;
 
-  explicit(false) format_and_loc(
+  explicit(false) format_with_loc(
     const char * str, const std::source_location & loc = std::source_location::current())
   : str{str}, loc{loc}
   {
@@ -81,7 +81,7 @@ public:
    * @endcode
    */
   template <typename... Args>
-  void debug(const format_and_loc & format, Args &&... args) const
+  void debug(const format_with_loc & format, Args &&... args) const
   {
     log(RCUTILS_LOG_SEVERITY_DEBUG, format, fmt::make_format_args(args...));
   }
@@ -103,7 +103,7 @@ public:
    * @endcode
    */
   template <typename... Args, typename Unique = decltype([]() { /*single instance per call*/ })>
-  void debug_once(const format_and_loc & format, Args &&... args) const
+  void debug_once(const format_with_loc & format, Args &&... args) const
   {
     log_once<Unique>(RCUTILS_LOG_SEVERITY_DEBUG, format, fmt::make_format_args(args...));
   }
@@ -125,7 +125,7 @@ public:
    */
   template <typename... Args, typename Unique = decltype([]() { /*single instance per call*/ })>
   void debug_throttle(
-    const rclcpp::Duration & duration, const format_and_loc & format, Args &&... args) const
+    const rclcpp::Duration & duration, const format_with_loc & format, Args &&... args) const
   {
     log_throttle<Unique>(
       RCUTILS_LOG_SEVERITY_DEBUG, duration, format, fmt::make_format_args(args...));
@@ -147,7 +147,7 @@ public:
    * @endcode
    */
   template <typename T, typename... Args, typename Unique = decltype([]() { /*single instance*/ })>
-  void debug_on_change(const T value, const format_and_loc & format, Args &&... args) const
+  void debug_on_change(const T value, const format_with_loc & format, Args &&... args) const
   {
     log_on_change<T, Unique>(
       RCUTILS_LOG_SEVERITY_DEBUG, value, format, fmt::make_format_args(args...));
@@ -172,7 +172,7 @@ public:
   template <
     typename TV, typename TT, typename... Args, typename Unique = decltype([]() { /*single*/ })>
   void debug_on_change(
-    const TV & value, const TT & threshold, const format_and_loc & format, Args &&... args) const
+    const TV & value, const TT & threshold, const format_with_loc & format, Args &&... args) const
   {
     log_on_change<TV, TT, Unique>(
       RCUTILS_LOG_SEVERITY_DEBUG, value, threshold, format, fmt::make_format_args(args...));
@@ -193,7 +193,7 @@ public:
    * @endcode
    */
   template <typename... Args>
-  void info(const format_and_loc & format, Args &&... args) const
+  void info(const format_with_loc & format, Args &&... args) const
   {
     log(RCUTILS_LOG_SEVERITY_INFO, format, fmt::make_format_args(args...));
   }
@@ -209,7 +209,7 @@ public:
    * @endcode
    */
   template <typename... Args, typename Unique = decltype([]() { /*single instance per call*/ })>
-  void info_once(const format_and_loc & format, Args &&... args) const
+  void info_once(const format_with_loc & format, Args &&... args) const
   {
     log_once<Unique>(RCUTILS_LOG_SEVERITY_INFO, format, fmt::make_format_args(args...));
   }
@@ -227,7 +227,7 @@ public:
    */
   template <typename... Args, typename Unique = decltype([]() { /*single instance per call*/ })>
   void info_throttle(
-    const rclcpp::Duration & duration, const format_and_loc & format, Args &&... args) const
+    const rclcpp::Duration & duration, const format_with_loc & format, Args &&... args) const
   {
     log_throttle<Unique>(
       RCUTILS_LOG_SEVERITY_INFO, duration, format, fmt::make_format_args(args...));
@@ -245,7 +245,7 @@ public:
    * @endcode
    */
   template <typename T, typename... Args, typename Unique = decltype([]() { /*single instance*/ })>
-  void info_on_change(const T value, const format_and_loc & format, Args &&... args) const
+  void info_on_change(const T value, const format_with_loc & format, Args &&... args) const
   {
     log_on_change<T, Unique>(
       RCUTILS_LOG_SEVERITY_INFO, value, format, fmt::make_format_args(args...));
@@ -266,7 +266,7 @@ public:
   template <
     typename TV, typename TT, typename... Args, typename Unique = decltype([]() { /*single*/ })>
   void info_on_change(
-    const TV & value, const TT & threshold, const format_and_loc & format, Args &&... args) const
+    const TV & value, const TT & threshold, const format_with_loc & format, Args &&... args) const
   {
     log_on_change<TV, TT, Unique>(
       RCUTILS_LOG_SEVERITY_INFO, value, threshold, format, fmt::make_format_args(args...));
@@ -287,7 +287,7 @@ public:
    * @endcode
    */
   template <typename... Args>
-  void warn(const format_and_loc & format, Args &&... args) const
+  void warn(const format_with_loc & format, Args &&... args) const
   {
     log(RCUTILS_LOG_SEVERITY_WARN, format, fmt::make_format_args(args...));
   }
@@ -303,7 +303,7 @@ public:
    * @endcode
    */
   template <typename... Args, typename Unique = decltype([]() { /*single instance per call*/ })>
-  void warn_once(const format_and_loc & format, Args &&... args) const
+  void warn_once(const format_with_loc & format, Args &&... args) const
   {
     log_once<Unique>(RCUTILS_LOG_SEVERITY_WARN, format, fmt::make_format_args(args...));
   }
@@ -321,7 +321,7 @@ public:
    */
   template <typename... Args, typename Unique = decltype([]() { /*single instance per call*/ })>
   void warn_throttle(
-    const rclcpp::Duration & duration, const format_and_loc & format, Args &&... args) const
+    const rclcpp::Duration & duration, const format_with_loc & format, Args &&... args) const
   {
     log_throttle<Unique>(
       RCUTILS_LOG_SEVERITY_WARN, duration, format, fmt::make_format_args(args...));
@@ -339,7 +339,7 @@ public:
    * @endcode
    */
   template <typename T, typename... Args, typename Unique = decltype([]() { /*single instance*/ })>
-  void warn_on_change(const T value, const format_and_loc & format, Args &&... args) const
+  void warn_on_change(const T value, const format_with_loc & format, Args &&... args) const
   {
     log_on_change<T, Unique>(
       RCUTILS_LOG_SEVERITY_WARN, value, format, fmt::make_format_args(args...));
@@ -360,7 +360,7 @@ public:
   template <
     typename TV, typename TT, typename... Args, typename Unique = decltype([]() { /*single*/ })>
   void warn_on_change(
-    const TV & value, const TT & threshold, const format_and_loc & format, Args &&... args) const
+    const TV & value, const TT & threshold, const format_with_loc & format, Args &&... args) const
   {
     log_on_change<TV, TT, Unique>(
       RCUTILS_LOG_SEVERITY_WARN, value, threshold, format, fmt::make_format_args(args...));
@@ -382,7 +382,7 @@ public:
    * @endcode
    */
   template <typename... Args>
-  void error(const format_and_loc & format, Args &&... args) const
+  void error(const format_with_loc & format, Args &&... args) const
   {
     log(RCUTILS_LOG_SEVERITY_ERROR, format, fmt::make_format_args(args...));
   }
@@ -398,7 +398,7 @@ public:
    * @endcode
    */
   template <typename... Args, typename Unique = decltype([]() { /*single instance per call*/ })>
-  void error_once(const format_and_loc & format, Args &&... args) const
+  void error_once(const format_with_loc & format, Args &&... args) const
   {
     log_once<Unique>(RCUTILS_LOG_SEVERITY_ERROR, format, fmt::make_format_args(args...));
   }
@@ -416,7 +416,7 @@ public:
    */
   template <typename... Args, typename Unique = decltype([]() { /*single instance per call*/ })>
   void error_throttle(
-    const rclcpp::Duration & duration, const format_and_loc & format, Args &&... args) const
+    const rclcpp::Duration & duration, const format_with_loc & format, Args &&... args) const
   {
     log_throttle<Unique>(
       RCUTILS_LOG_SEVERITY_ERROR, duration, format, fmt::make_format_args(args...));
@@ -434,7 +434,7 @@ public:
    * @endcode
    */
   template <typename T, typename... Args, typename Unique = decltype([]() { /*single instance*/ })>
-  void error_on_change(const T value, const format_and_loc & format, Args &&... args) const
+  void error_on_change(const T value, const format_with_loc & format, Args &&... args) const
   {
     log_on_change<T, Unique>(
       RCUTILS_LOG_SEVERITY_ERROR, value, format, fmt::make_format_args(args...));
@@ -455,7 +455,7 @@ public:
   template <
     typename TV, typename TT, typename... Args, typename Unique = decltype([]() { /*single*/ })>
   void error_on_change(
-    const TV & value, const TT & threshold, const format_and_loc & format, Args &&... args) const
+    const TV & value, const TT & threshold, const format_with_loc & format, Args &&... args) const
   {
     log_on_change<TV, TT, Unique>(
       RCUTILS_LOG_SEVERITY_ERROR, value, threshold, format, fmt::make_format_args(args...));
@@ -477,7 +477,7 @@ public:
    * @endcode
    */
   template <typename... Args>
-  void fatal(const format_and_loc & format, Args &&... args) const
+  void fatal(const format_with_loc & format, Args &&... args) const
   {
     log(RCUTILS_LOG_SEVERITY_FATAL, format, fmt::make_format_args(args...));
   }
@@ -493,7 +493,7 @@ public:
    * @endcode
    */
   template <typename... Args, typename Unique = decltype([]() { /*single instance per call*/ })>
-  void fatal_once(const format_and_loc & format, Args &&... args) const
+  void fatal_once(const format_with_loc & format, Args &&... args) const
   {
     log_once<Unique>(RCUTILS_LOG_SEVERITY_FATAL, format, fmt::make_format_args(args...));
   }
@@ -511,7 +511,7 @@ public:
    */
   template <typename... Args, typename Unique = decltype([]() { /*single instance per call*/ })>
   void fatal_throttle(
-    const rclcpp::Duration & duration, const format_and_loc & format, Args &&... args) const
+    const rclcpp::Duration & duration, const format_with_loc & format, Args &&... args) const
   {
     log_throttle<Unique>(
       RCUTILS_LOG_SEVERITY_FATAL, duration, format, fmt::make_format_args(args...));
@@ -529,7 +529,7 @@ public:
    * @endcode
    */
   template <typename T, typename... Args, typename Unique = decltype([]() { /*single instance*/ })>
-  void fatal_on_change(const T value, const format_and_loc & format, Args &&... args) const
+  void fatal_on_change(const T value, const format_with_loc & format, Args &&... args) const
   {
     log_on_change<T, Unique>(
       RCUTILS_LOG_SEVERITY_FATAL, value, format, fmt::make_format_args(args...));
@@ -550,7 +550,7 @@ public:
   template <
     typename TV, typename TT, typename... Args, typename Unique = decltype([]() { /*single*/ })>
   void fatal_on_change(
-    const TV & value, const TT & threshold, const format_and_loc & format, Args &&... args) const
+    const TV & value, const TT & threshold, const format_with_loc & format, Args &&... args) const
   {
     log_on_change<TV, TT, Unique>(
       RCUTILS_LOG_SEVERITY_FATAL, value, threshold, format, fmt::make_format_args(args...));
@@ -570,7 +570,7 @@ private:
    * It handles the interaction with the underlying RCL logging system.
    */
   void log(
-    const RCUTILS_LOG_SEVERITY severity, const format_and_loc & format,
+    const RCUTILS_LOG_SEVERITY severity, const format_with_loc & format,
     const fmt::format_args & args) const
   {
     RCUTILS_LOGGING_AUTOINIT;
@@ -595,7 +595,7 @@ private:
    */
   template <typename Unique>
   void log_once(
-    const RCUTILS_LOG_SEVERITY severity, const format_and_loc & format,
+    const RCUTILS_LOG_SEVERITY severity, const format_with_loc & format,
     const fmt::format_args & args) const
   {
     static bool already_logged = false;
@@ -619,7 +619,7 @@ private:
   template <typename Unique>
   void log_throttle(
     const RCUTILS_LOG_SEVERITY severity, const rclcpp::Duration & duration,
-    const format_and_loc & format, const fmt::format_args & args) const
+    const format_with_loc & format, const fmt::format_args & args) const
   {
     static rclcpp::Time last_logged(static_cast<int64_t>(0), clock_.get_clock_type());
 
@@ -648,7 +648,7 @@ private:
    */
   template <typename T, typename Unique>
   void log_on_change(
-    const RCUTILS_LOG_SEVERITY severity, const T & value, const format_and_loc & format,
+    const RCUTILS_LOG_SEVERITY severity, const T & value, const format_with_loc & format,
     const fmt::format_args & args) const
   {
     static std::optional<T> last_value;
@@ -675,7 +675,7 @@ private:
   template <typename TV, typename TT, typename Unique>
   void log_on_change(
     const RCUTILS_LOG_SEVERITY severity, const TV & value, const TT & threshold,
-    const format_and_loc & format, const fmt::format_args & args) const
+    const format_with_loc & format, const fmt::format_args & args) const
   {
     static std::optional<TV> last_value;
     if (!last_value || std::abs(value - last_value.value()) >= threshold) {
