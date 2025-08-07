@@ -5,6 +5,7 @@
 #include <fmt/format.h>
 #include <rcutils/logging.h>
 
+#include <cmath>
 #include <rclcpp/clock.hpp>
 #include <rclcpp/exceptions/exceptions.hpp>
 #include <rclcpp/logger.hpp>
@@ -672,7 +673,7 @@ private:
     const format_string & format, const fmt::format_args & args) const
   {
     static TV last_value;
-    if ((value - last_value) >= threshold) {
+    if (std::abs(value - last_value) >= threshold) {
       last_value = value;
       log(severity, format, args);
     }
