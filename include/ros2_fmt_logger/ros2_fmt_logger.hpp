@@ -6,6 +6,7 @@
 #include <rcutils/logging.h>
 
 #include <rclcpp/clock.hpp>
+#include <rclcpp/exceptions/exceptions.hpp>
 #include <rclcpp/logger.hpp>
 #include <source_location>
 #include <string>
@@ -28,7 +29,7 @@ struct format_string
   std::string_view str;
   std::source_location loc;
 
-  format_string(
+  explicit(false) format_string(
     const char * str, const std::source_location & loc = std::source_location::current())
   : str{str}, loc{loc}
   {
@@ -626,7 +627,7 @@ private:
         last_logged = now;
         log(severity, format, args);
       }
-    } catch (const std::exception & ex) {  // now() can throw
+    } catch (const rclcpp::exceptions::RCLError & ex) {  // now() can throw
       log(RCUTILS_LOG_SEVERITY_ERROR, format_string("{}"), fmt::make_format_args(ex.what()));
       log(severity, format, args);
     }
