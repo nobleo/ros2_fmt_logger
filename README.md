@@ -43,8 +43,6 @@ logger.error_on_change(temperature, 5.0, "Temperature changed significantly: {:.
 ```cmake
 find_package(ros2_fmt_logger REQUIRED)
 target_link_libraries(your_target ros2_fmt_logger::ros2_fmt_logger)
-# Ensure C++20 features are available
-target_compile_features(your_target INTERFACE cxx_std_20)  # Or `set(CMAKE_CXX_STANDARD 20)`
 ```
 
 ### Include the header
