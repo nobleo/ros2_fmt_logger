@@ -6,6 +6,7 @@
 #include <rcutils/logging.h>
 
 #include <cmath>
+#include <optional>
 #include <rclcpp/clock.hpp>
 #include <rclcpp/exceptions/exceptions.hpp>
 #include <rclcpp/logger.hpp>
@@ -641,18 +642,21 @@ private:
    * @param format Format string with source location information
    * @param args Pre-formatted arguments for the message
    *
-   * Uses a static variable per template instantiation to store the last
+   * Uses a static optional variable per template instantiation to store the last
    * seen value and compares it with the current value using operator!=.
+   * Does not log the initial value.
    */
   template <typename T, typename Unique>
   void log_on_change(
     const RCUTILS_LOG_SEVERITY severity, const T & value, const format_and_loc & format,
     const fmt::format_args & args) const
   {
-    static T last_value;
-    if (value != last_value) {
+    static std::optional<T> last_value;
+    if (!last_value || last_value.value() != value) {
+      if (last_value.has_value()) {
+        log(severity, format, args);
+      }
       last_value = value;
-      log(severity, format, args);
     }
   }
 
@@ -664,18 +668,21 @@ private:
    * @param format Format string with source location information
    * @param args Pre-formatted arguments for the message
    *
-   * Uses a static variable per template instantiation to store the last
+   * Uses a static optional variable per template instantiation to store the last
    * logged value and compares the difference with the threshold using operator>=.
+   * Does not log the initial value.
    */
   template <typename TV, typename TT, typename Unique>
   void log_on_change(
     const RCUTILS_LOG_SEVERITY severity, const TV & value, const TT & threshold,
     const format_and_loc & format, const fmt::format_args & args) const
   {
-    static TV last_value;
-    if (std::abs(value - last_value) >= threshold) {
+    static std::optional<TV> last_value;
+    if (!last_value || std::abs(value - last_value.value()) >= threshold) {
+      if (last_value.has_value()) {
+        log(severity, format, args);
+      }
       last_value = value;
-      log(severity, format, args);
     }
   }
 };

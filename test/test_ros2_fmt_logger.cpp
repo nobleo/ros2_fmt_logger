@@ -159,31 +159,27 @@ TEST_F(Ros2FmtLoggerTest, TestFatalOnChangeLogging)
     fmt_logger->fatal_on_change(value, "Sensor value changed to: {}", value);
   };
 
-  // First call should log (initial value)
+  // First call should NOT log (initial value is not logged)
   log(sensor_value);
-  EXPECT_EQ(captured_logs.size(), 1u);
-  if (captured_logs.size() >= 1) {
-    EXPECT_EQ(captured_logs[0].second, "Sensor value changed to: 100");
-    EXPECT_EQ(captured_logs[0].first, RCUTILS_LOG_SEVERITY_FATAL);
-  }
+  EXPECT_EQ(captured_logs.size(), 0u);
 
   // Same value should not log again
   log(sensor_value);
   log(sensor_value);
-  EXPECT_EQ(captured_logs.size(), 1u);  // Still only 1 log entry
+  EXPECT_EQ(captured_logs.size(), 0u);  // Still no log entries
 
   // Different value should log
   sensor_value = 200;
   log(sensor_value);
-  EXPECT_EQ(captured_logs.size(), 2u);
-  if (captured_logs.size() >= 2) {
-    EXPECT_EQ(captured_logs[1].second, "Sensor value changed to: 200");
-    EXPECT_EQ(captured_logs[1].first, RCUTILS_LOG_SEVERITY_FATAL);
+  EXPECT_EQ(captured_logs.size(), 1u);
+  if (captured_logs.size() >= 1) {
+    EXPECT_EQ(captured_logs[0].second, "Sensor value changed to: 200");
+    EXPECT_EQ(captured_logs[0].first, RCUTILS_LOG_SEVERITY_FATAL);
   }
 
   // Same value again should not log
   log(sensor_value);
-  EXPECT_EQ(captured_logs.size(), 2u);
+  EXPECT_EQ(captured_logs.size(), 1u);
 }
 
 TEST_F(Ros2FmtLoggerTest, TestFatalOnChangeWithThreshold)
@@ -200,38 +196,34 @@ TEST_F(Ros2FmtLoggerTest, TestFatalOnChangeWithThreshold)
       value, threshold, "Temperature: {:.1f}°C (threshold: {:.1f})", value, threshold);
   };
 
-  // First call should always log (initial value)
+  // First call should NOT log (initial value is not logged)
   log(temperature);
-  EXPECT_EQ(captured_logs.size(), 1u);
-  if (captured_logs.size() >= 1) {
-    EXPECT_EQ(captured_logs[0].second, "Temperature: 20.0°C (threshold: 5.0)");
-    EXPECT_EQ(captured_logs[0].first, RCUTILS_LOG_SEVERITY_FATAL);
-  }
+  EXPECT_EQ(captured_logs.size(), 0u);
 
   // Small changes below threshold should not log
   temperature = 24.0;  // Change of 4.0 total, still below threshold
   log(temperature);
-  EXPECT_EQ(captured_logs.size(), 1u);  // Still only 1 log entry
+  EXPECT_EQ(captured_logs.size(), 0u);  // Still no log entries
 
   // Large change meeting threshold should log
-  temperature = 25.5;  // Change of 5.5 from last logged (20.0), above threshold
+  temperature = 25.5;  // Change of 5.5 from initial (20.0), above threshold
   log(temperature);
-  EXPECT_EQ(captured_logs.size(), 2u);
-  if (captured_logs.size() >= 2) {
-    EXPECT_EQ(captured_logs[1].second, "Temperature: 25.5°C (threshold: 5.0)");
-    EXPECT_EQ(captured_logs[1].first, RCUTILS_LOG_SEVERITY_FATAL);
+  EXPECT_EQ(captured_logs.size(), 1u);
+  if (captured_logs.size() >= 1) {
+    EXPECT_EQ(captured_logs[0].second, "Temperature: 25.5°C (threshold: 5.0)");
+    EXPECT_EQ(captured_logs[0].first, RCUTILS_LOG_SEVERITY_FATAL);
   }
 
   // Small change from new baseline should not log
   temperature = 27.0;  // Change of 1.5 from last logged (25.5), below threshold
   log(temperature);
-  EXPECT_EQ(captured_logs.size(), 2u);  // Still only 2 log entries
+  EXPECT_EQ(captured_logs.size(), 1u);  // Still only 1 log entry
 
   // Another large change should log
   temperature = 31.0;  // Change of 5.5 from last logged (25.5), above threshold
   log(temperature);
-  EXPECT_EQ(captured_logs.size(), 3u);
-  if (captured_logs.size() >= 3) {
-    EXPECT_EQ(captured_logs[2].second, "Temperature: 31.0°C (threshold: 5.0)");
+  EXPECT_EQ(captured_logs.size(), 2u);
+  if (captured_logs.size() >= 2) {
+    EXPECT_EQ(captured_logs[1].second, "Temperature: 31.0°C (threshold: 5.0)");
   }
 }
