@@ -70,6 +70,16 @@ public:
   }
 
   /**
+   * @brief Construct a Logger with a specific clock for throttling features
+   * @param logger The rclcpp::Logger to extend
+   * @param clock Clock pointer used for throttling functionality
+   */
+  Logger(const rclcpp::Logger & logger, const rclcpp::Clock::ConstSharedPtr clock_ptr)
+  : rclcpp::Logger(logger), clock_(*clock_ptr)  // ptr is default return of get_clock()
+  {
+  }
+
+  /**
    * @brief Log a debug message with fmt-style formatting
    * @param format Format string with placeholders
    * @param args Arguments to format into the string

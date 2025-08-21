@@ -24,6 +24,13 @@ target_include_directories(${PROJECT_NAME} INTERFACE
 # Ensure C++20 features are available
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
 
+# Link fmt library to the interface library
+target_link_libraries(${PROJECT_NAME} INTERFACE
+  fmt::fmt
+  rclcpp::rclcpp
+  rcutils::rcutils
+)
+
 # Install the target
 install(TARGETS ${PROJECT_NAME}
   EXPORT export_${PROJECT_NAME}
