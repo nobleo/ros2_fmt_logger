@@ -14,8 +14,16 @@
 
 using std::chrono_literals::operator""ms;
 
+struct Log
+{
+  int severity;
+  std::string message;
+
+  bool operator==(const Log & other) const = default;
+};
+
 // Custom logging handler to capture log output
-static std::vector<std::pair<int, std::string>> captured_logs;
+static std::vector<Log> captured_logs;
 
 static void test_log_handler(
   const rcutils_log_location_t * /*location*/, int severity, const char * /*name*/,
@@ -60,8 +68,7 @@ TEST_F(Ros2FmtLoggerTest, TestFatalLoggingEquivalence)
   // Test with fmt logger
   fmt_logger_->fatal("Value: {}", 5);
   ASSERT_EQ(captured_logs.size(), 1u);
-  auto fmt_severity = captured_logs[0].first;
-  auto fmt_message = captured_logs[0].second;
+  auto fmt_log = captured_logs[0];
 
   // Clear for next test
   captured_logs.clear();
@@ -69,17 +76,15 @@ TEST_F(Ros2FmtLoggerTest, TestFatalLoggingEquivalence)
   // Test with RCLCPP_FATAL
   RCLCPP_FATAL(rcl_logger_, "Value: %d", 5);
   ASSERT_EQ(captured_logs.size(), 1u);
-  auto rclcpp_severity = captured_logs[0].first;
-  auto rclcpp_message = captured_logs[0].second;
+  auto rclcpp_log = captured_logs[0];
 
   // Both should use FATAL severity
-  EXPECT_EQ(fmt_severity, RCUTILS_LOG_SEVERITY_FATAL);
-  EXPECT_EQ(rclcpp_severity, RCUTILS_LOG_SEVERITY_FATAL);
-  EXPECT_EQ(fmt_severity, rclcpp_severity);
+  EXPECT_EQ(fmt_log.severity, RCUTILS_LOG_SEVERITY_FATAL);
+  EXPECT_EQ(rclcpp_log.severity, RCUTILS_LOG_SEVERITY_FATAL);
 
   // Both should produce the same message content
-  EXPECT_EQ(fmt_message, rclcpp_message);
-  EXPECT_EQ(fmt_message, "Value: 5");
+  EXPECT_EQ(fmt_log, rclcpp_log);
+  EXPECT_EQ(fmt_log.message, "Value: 5");
 }
 
 TEST_F(Ros2FmtLoggerTest, TestFatalOnceLogging)
@@ -91,8 +96,8 @@ TEST_F(Ros2FmtLoggerTest, TestFatalOnceLogging)
 
   // Should only log once, even when called multiple times
   EXPECT_EQ(captured_logs.size(), 3u);
-  EXPECT_EQ(captured_logs[0].second, "Test message");
-  EXPECT_EQ(captured_logs[0].first, RCUTILS_LOG_SEVERITY_FATAL);
+  EXPECT_EQ(captured_logs[0].message, "Test message");
+  EXPECT_EQ(captured_logs[0].severity, RCUTILS_LOG_SEVERITY_FATAL);
 
   // But messages on the same line should not:
   for (int i = 1; i < 3; ++i) {
@@ -100,8 +105,8 @@ TEST_F(Ros2FmtLoggerTest, TestFatalOnceLogging)
   }
   // Should only log once, even when called multiple times
   EXPECT_EQ(captured_logs.size(), 4u);
-  EXPECT_EQ(captured_logs[3].second, "Test loop message");
-  EXPECT_EQ(captured_logs[3].first, RCUTILS_LOG_SEVERITY_FATAL);
+  EXPECT_EQ(captured_logs[3].message, "Test loop message");
+  EXPECT_EQ(captured_logs[3].severity, RCUTILS_LOG_SEVERITY_FATAL);
 }
 
 TEST_F(Ros2FmtLoggerTest, TestFatalThrottleLogging)
@@ -122,8 +127,8 @@ TEST_F(Ros2FmtLoggerTest, TestFatalThrottleLogging)
   log(1);
   EXPECT_EQ(captured_logs.size(), 1u);
   if (captured_logs.size() >= 1) {
-    EXPECT_EQ(captured_logs[0].second, "Throttled message: 1");
-    EXPECT_EQ(captured_logs[0].first, RCUTILS_LOG_SEVERITY_FATAL);
+    EXPECT_EQ(captured_logs[0].message, "Throttled message: 1");
+    EXPECT_EQ(captured_logs[0].severity, RCUTILS_LOG_SEVERITY_FATAL);
   }
 
   // Immediate subsequent calls should be throttled (not logged)
@@ -138,8 +143,8 @@ TEST_F(Ros2FmtLoggerTest, TestFatalThrottleLogging)
   log(4);
   EXPECT_EQ(captured_logs.size(), 2u);
   if (captured_logs.size() >= 2) {
-    EXPECT_EQ(captured_logs[1].second, "Throttled message: 4");
-    EXPECT_EQ(captured_logs[1].first, RCUTILS_LOG_SEVERITY_FATAL);
+    EXPECT_EQ(captured_logs[1].message, "Throttled message: 4");
+    EXPECT_EQ(captured_logs[1].severity, RCUTILS_LOG_SEVERITY_FATAL);
   }
 
   // Immediate call should be throttled again
@@ -173,8 +178,8 @@ TEST_F(Ros2FmtLoggerTest, TestFatalOnChangeLogging)
   log(sensor_value);
   EXPECT_EQ(captured_logs.size(), 1u);
   if (captured_logs.size() >= 1) {
-    EXPECT_EQ(captured_logs[0].second, "Sensor value changed to: 200");
-    EXPECT_EQ(captured_logs[0].first, RCUTILS_LOG_SEVERITY_FATAL);
+    EXPECT_EQ(captured_logs[0].message, "Sensor value changed to: 200");
+    EXPECT_EQ(captured_logs[0].severity, RCUTILS_LOG_SEVERITY_FATAL);
   }
 
   // Same value again should not log
@@ -210,8 +215,8 @@ TEST_F(Ros2FmtLoggerTest, TestFatalOnChangeWithThreshold)
   log(temperature);
   EXPECT_EQ(captured_logs.size(), 1u);
   if (captured_logs.size() >= 1) {
-    EXPECT_EQ(captured_logs[0].second, "Temperature: 25.5°C (threshold: 5.0)");
-    EXPECT_EQ(captured_logs[0].first, RCUTILS_LOG_SEVERITY_FATAL);
+    EXPECT_EQ(captured_logs[0].message, "Temperature: 25.5°C (threshold: 5.0)");
+    EXPECT_EQ(captured_logs[0].severity, RCUTILS_LOG_SEVERITY_FATAL);
   }
 
   // Small change from new baseline should not log
@@ -224,6 +229,6 @@ TEST_F(Ros2FmtLoggerTest, TestFatalOnChangeWithThreshold)
   log(temperature);
   EXPECT_EQ(captured_logs.size(), 2u);
   if (captured_logs.size() >= 2) {
-    EXPECT_EQ(captured_logs[1].second, "Temperature: 31.0°C (threshold: 5.0)");
+    EXPECT_EQ(captured_logs[1].message, "Temperature: 31.0°C (threshold: 5.0)");
   }
 }
