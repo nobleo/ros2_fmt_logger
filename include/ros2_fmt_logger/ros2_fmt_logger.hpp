@@ -585,8 +585,9 @@ private:
   {
     RCUTILS_LOGGING_AUTOINIT;
     if (rcutils_logging_logger_is_enabled_for(get_name(), severity)) {
+      auto function_name = extract_function_name(format.loc.function_name());
       rcutils_log_location_t rcutils_location{
-        .function_name = format.loc.function_name(),
+        .function_name = function_name.data(),
         .file_name = format.loc.file_name(),
         .line_number = static_cast<size_t>(format.loc.line())};
       rcutils_log(
@@ -694,6 +695,24 @@ private:
       }
       last_value = value;
     }
+  }
+
+  /**
+  * @brief Closely mimic the original behavior of RCLCPP_ logging which uses the __FUNCTION__ macro
+  * @param full_signature The signature as returned by std::source_location
+  * @return The extracted function name
+  */
+  inline std::string extract_function_name(std::string_view full_signature) const
+  {
+    auto parenthesis = full_signature.find('(');
+    if (parenthesis == std::string_view::npos) {
+      return std::string(full_signature);
+    }
+
+    auto last_colon = full_signature.rfind("::", parenthesis);
+    auto start = (last_colon == std::string_view::npos) ? 0 : last_colon + 2;
+
+    return std::string(full_signature.substr(start, parenthesis - start));
   }
 };
 

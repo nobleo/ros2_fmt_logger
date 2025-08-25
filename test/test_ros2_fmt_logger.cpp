@@ -18,6 +18,8 @@ struct Log
 {
   int severity;
   std::string message;
+  std::string name;
+  std::string function_name;
 
   bool operator==(const Log & other) const = default;
 };
@@ -26,12 +28,13 @@ struct Log
 static std::vector<Log> captured_logs;
 
 static void test_log_handler(
-  const rcutils_log_location_t * /*location*/, int severity, const char * /*name*/,
+  const rcutils_log_location_t * location, int severity, const char * name,
   rcutils_time_point_value_t /*timestamp*/, const char * format, va_list * args)
 {
   char buffer[1024];
   vsnprintf(buffer, sizeof(buffer), format, *args);
-  captured_logs.emplace_back(severity, std::string(buffer));
+  captured_logs.emplace_back(
+    severity, std::string(buffer), std::string(name), std::string(location->function_name));
 }
 
 class Ros2FmtLoggerTest : public ::testing::Test
@@ -80,11 +83,17 @@ TEST_F(Ros2FmtLoggerTest, TestFatalLoggingEquivalence)
 
   // Both should use FATAL severity
   EXPECT_EQ(fmt_log.severity, RCUTILS_LOG_SEVERITY_FATAL);
-  EXPECT_EQ(rclcpp_log.severity, RCUTILS_LOG_SEVERITY_FATAL);
+  EXPECT_EQ(fmt_log.severity, rclcpp_log.severity);
 
   // Both should produce the same message content
-  EXPECT_EQ(fmt_log, rclcpp_log);
   EXPECT_EQ(fmt_log.message, "Value: 5");
+  EXPECT_EQ(fmt_log.message, rclcpp_log.message);
+
+  // Both should have the same logger name
+  EXPECT_EQ(fmt_log.name, rclcpp_log.name);
+
+  // Both should have the same function name
+  EXPECT_EQ(fmt_log.function_name, rclcpp_log.function_name);
 }
 
 TEST_F(Ros2FmtLoggerTest, TestFatalOnceLogging)
