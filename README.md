@@ -100,8 +100,10 @@ See [demo_ros2_fmt_logger.cpp](demo/demo_ros2_fmt_logger.cpp) for more examples.
 
 ## Credits
 
-![Nobleo Logo](https://nobleo-technology.nl/wp-content/uploads/2024/08/Nobleo_BG-paars_logo-wit-small.jpg)
+<!-- markdownlint-disable MD033 -->
+<img src="https://nobleo-technology.nl/wp-content/uploads/2024/08/Nobleo_BG-paars_logo-wit-small.jpg" alt="Nobleo Logo" width="300"/>
+<!-- markdownlint-enable MD033 -->
 
 This is a package developed by Nobleo Autonomous Solutions B.V.
 
-Looking for paid support options? Contact us at (<https://nobleo-technology.nl>).
+Looking for paid support options? Contact us at [nobleo-technology.nl](https://nobleo-technology.nl).
