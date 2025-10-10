@@ -14,16 +14,16 @@ int main(int argc, char ** argv)
   rclcpp::init(argc, argv);
   auto node = rclcpp::Node::make_shared("demo_node");
   auto rcl_logger = node->get_logger();
-  auto fmt_logger = ros2_fmt_logger::Logger(rcl_logger);
+  auto fmt_logger = ros2_fmt_logger::Logger{rcl_logger};
 
   std::cout << "\n=== Demonstrating equivalent logging outputs ===\n" << std::endl;
 
   std::cout << "Integer formatting:" << std::endl;
   fmt_logger.fatal("Value: {}", 5);
   RCLCPP_FATAL(rcl_logger, "Value: %d", 5);
-  // After: https://github.com/ros2/rclcpp/pull/2922
-  // std::cout << "\nUsing RCLCPP macros with the fmt_logger:" << std::endl;
-  // RCLCPP_FATAL(fmt_logger, "Value: %d", 5);
+
+  std::cout << "\nUsing RCLCPP macros with the fmt_logger:" << std::endl;
+  RCLCPP_FATAL(fmt_logger, "Value: %d", 5);
 
   std::cout << "\nComplex formatting:" << std::endl;
   fmt_logger.fatal("Item {} at ({}, {}) = {:.2f}", 42, 10, 20, 1.2345);
@@ -40,7 +40,7 @@ int main(int argc, char ** argv)
     std::cout << "Loop iteration " << i << std::endl;
     fmt_logger.fatal_throttle(500ms, "Throttled message #{} - only some will appear", i);
     fmt_logger.fatal_throttle(500ms, "Logging twice: {}", i);
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));  // Sleep 200ms between calls
+    std::this_thread::sleep_for(200ms);  // Sleep 200ms between calls
   }
 
   std::cout << "\nFatal on change functionality (logs only when value changes):" << std::endl;
