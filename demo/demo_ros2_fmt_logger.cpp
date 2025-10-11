@@ -44,7 +44,6 @@ int main(int argc, char ** argv)
   }
 
   std::cout << "\nFatal on change functionality (logs only when value changes):" << std::endl;
-
   // Simulate sensor readings that change over time
   std::vector<int> sensor_readings = {100, 100, 100, 200, 200, 150, 150, 300};
   for (const auto reading : sensor_readings) {
@@ -54,6 +53,12 @@ int main(int argc, char ** argv)
   }
 
   std::cout << "\nFatal on change with different types:" << std::endl;
+  // Test with string values
+  std::vector<std::string> states = {"idle", "idle", "running", "running", "running", "stopped"};
+  for (const auto & state : states) {
+    std::cout << "State = " << state << std::endl;
+    fmt_logger.warn_on_change(state, "State changed to: {}", state);
+  }
 
   // Test with floating point values
   std::cout << "\nFatal on change with floating point values:" << std::endl;
