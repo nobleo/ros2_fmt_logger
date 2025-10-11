@@ -3,6 +3,7 @@
 #pragma once
 
 #include <fmt/format.h>
+#include <rclcpp/version.h>
 #include <rcutils/logging.h>
 
 #include <cmath>
@@ -567,8 +568,11 @@ public:
   }
 
 private:
-  /// Clock used for throttling functionality, defaults to steady time
-  rclcpp::Clock clock_{RCL_STEADY_TIME};
+  // Clock used for throttling functionality, defaults to steady time (mutable for humble)
+#if RCLCPP_VERSION_MAJOR < 28
+  mutable
+#endif
+    rclcpp::Clock clock_{RCL_STEADY_TIME};
 
   /**
    * @brief Core logging function that formats and outputs messages
