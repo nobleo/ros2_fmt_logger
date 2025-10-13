@@ -2,8 +2,8 @@
 Changelog for package ros2_fmt_logger
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.1 (2025-10-13)
+------------------
 * Using RCLCPP macros with the fmt_logger
 * Add humble support
 * Contributors: Tim Clephas
