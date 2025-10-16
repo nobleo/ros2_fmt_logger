@@ -135,7 +135,7 @@ TEST_F(Ros2FmtLoggerTest, TestFatalThrottleLogging)
   // First call should log immediately
   log(1);
   EXPECT_EQ(captured_logs.size(), 1u);
-  if (captured_logs.size() >= 1) {
+  if (!captured_logs.empty()) {
     EXPECT_EQ(captured_logs[0].message, "Throttled message: 1");
     EXPECT_EQ(captured_logs[0].severity, RCUTILS_LOG_SEVERITY_FATAL);
   }
@@ -186,7 +186,7 @@ TEST_F(Ros2FmtLoggerTest, TestFatalOnChangeLogging)
   sensor_value = 200;
   log(sensor_value);
   EXPECT_EQ(captured_logs.size(), 1u);
-  if (captured_logs.size() >= 1) {
+  if (!captured_logs.empty()) {
     EXPECT_EQ(captured_logs[0].message, "Sensor value changed to: 200");
     EXPECT_EQ(captured_logs[0].severity, RCUTILS_LOG_SEVERITY_FATAL);
   }
@@ -223,7 +223,7 @@ TEST_F(Ros2FmtLoggerTest, TestFatalOnChangeWithThreshold)
   temperature = 25.5;  // Change of 5.5 from initial (20.0), above threshold
   log(temperature);
   EXPECT_EQ(captured_logs.size(), 1u);
-  if (captured_logs.size() >= 1) {
+  if (!captured_logs.empty()) {
     EXPECT_EQ(captured_logs[0].message, "Temperature: 25.5°C (threshold: 5.0)");
     EXPECT_EQ(captured_logs[0].severity, RCUTILS_LOG_SEVERITY_FATAL);
   }
