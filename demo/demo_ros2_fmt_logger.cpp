@@ -2,7 +2,7 @@
 
 #include <chrono>
 #include <iostream>
-#include <rclcpp/rclcpp.hpp>
+#include <rclcpp/node.hpp>
 #include <thread>
 
 #include "ros2_fmt_logger/ros2_fmt_logger.hpp"
