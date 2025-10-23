@@ -8,7 +8,8 @@ A modern, ROS 2 logging library that provides fmt-style formatting as a replacem
 
 - Function calls instead of macros: `logger.info("Hello, {}!", name)` instead of `RCLCPP_INFO(logger, "Hello, %s", name.c_str())`
 - Additional `.on_change()` method for logging changes in values
-- chrono syntax for throttling: `logger.warn_throttle(1s, "Warning: {}", value)`
+- Chrono syntax for throttling: `logger.warn_throttle(1s, "Warning: {}", value)`
+- Backwards compatible with the macros, so easy to start using in existing projects without a full rewrite of the current log statements
 
 ## Examples
 
@@ -88,7 +89,7 @@ logger.info("Hello, {}!", name);
 logger.info("Processing {1} of {0} items", total, current);
 
 // Format specifiers
-logger.info("Progress: {:.1%}", progress);  // Percentage with 1 decimal
+logger.info("Progress: {:.1}%", progress);  // Percentage with 1 decimal
 logger.info("Value: {:08.2f}", value);     // Zero-padded floating point
 logger.info("Hex: {:#x}", number);         // Hexadecimal with 0x prefix
 
