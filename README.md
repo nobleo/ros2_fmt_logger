@@ -99,6 +99,12 @@ logger.info("Values: {}", std::vector{1, 2, 3, 4});
 
 See [demo_ros2_fmt_logger.cpp](demo/demo_ros2_fmt_logger.cpp) for more examples.
 
+## Alternatives
+
+- *[ros2_logging_fmt](https://github.com/facontidavide/ros2_logging_fmt)* similar idea, different implementation
+- *[rclcpp_logging](https://github.com/ros2/rclcpp/blob/rolling/rclcpp/include/rclcpp/logging.hpp)* official ROS 2 logging library
+- *[rosfmt](https://github.com/xqms/rosfmt)* ROS 1 package for fmt-style logging
+
 ## Credits
 
 <!-- markdownlint-disable MD033 -->
