@@ -645,7 +645,8 @@ private:
         log(severity, format, args);
       }
     } catch (const rclcpp::exceptions::RCLError & ex) {  // now() can throw
-      log(RCUTILS_LOG_SEVERITY_ERROR, "{}", fmt::make_format_args(ex.what()));
+      const std::string error_msg = ex.what();           // String to support for fmt>=10.1.1
+      log(RCUTILS_LOG_SEVERITY_ERROR, "{}", fmt::make_format_args(error_msg));
       log(severity, format, args);
     }
   }
