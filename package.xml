@@ -5,7 +5,7 @@
 
 <package format="3">
   <name>ros2_fmt_logger</name>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
   <description>
     A modern, ROS 2 logging library that provides fmt-style formatting as a replacement for RCLCPP logging macros
   </description>

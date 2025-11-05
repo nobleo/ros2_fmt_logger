@@ -2,8 +2,8 @@
 Changelog for package ros2_fmt_logger
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.2 (2025-11-05)
+------------------
 * Create intermediate string to support for fmt>=10.1.1
 * Fix some small clang-tidy issues
 * Contributors: Ramon Wijnands, Tim Clephas
