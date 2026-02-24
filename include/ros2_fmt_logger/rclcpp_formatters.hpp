@@ -60,7 +60,7 @@ struct fmt::formatter<rclcpp::Time>
 };
 
 /**
- * @brief fmt formatter for rclcpp::Rate and rclcpp::WallRate.
+ * @brief Base fmt formatter for rclcpp rate types (rclcpp::Rate, rclcpp::WallRate).
  *
  * Formats the rate as a frequency in Hz. All fmt double format specs are
  * supported, with "Hz" automatically appended.
@@ -72,18 +72,22 @@ struct fmt::formatter<rclcpp::Time>
  * fmt::format("{:.2f}", rate);  // "10.00Hz"
  * @endcode
  */
-template <>
-struct fmt::formatter<rclcpp::Rate> : fmt::formatter<double>
+template <typename T>
+struct RateFormatter : fmt::formatter<double>
 {
-  auto format(const rclcpp::Rate & rate, fmt::format_context & ctx) const
+  auto format(const T & rate, fmt::format_context & ctx) const
   {
     const auto hz = 1.0s / rate.period();
     return fmt::format_to(fmt::formatter<double>::format(static_cast<double>(hz), ctx), "Hz");
   }
 };
 
-// WallRate has the same formatting as Rate, so we can reuse the same formatter.
 template <>
-struct fmt::formatter<rclcpp::WallRate> : fmt::formatter<rclcpp::Rate>
+struct fmt::formatter<rclcpp::Rate> : RateFormatter<rclcpp::Rate>
+{
+};
+
+template <>
+struct fmt::formatter<rclcpp::WallRate> : RateFormatter<rclcpp::WallRate>
 {
 };
