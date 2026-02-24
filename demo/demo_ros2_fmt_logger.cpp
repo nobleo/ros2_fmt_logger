@@ -73,9 +73,10 @@ int main(int argc, char ** argv)
   }
 
   // ROS types:
-  std::cout << "\nInfo with rclcpp::Duration:" << std::endl;
+  std::cout << "\nInfo with rclcpp::Duration and rclcpp::Time:" << std::endl;
   rclcpp::Duration duration{800ms};
-  fmt_logger.info("Duration: {}", duration);
+  rclcpp::Time time = node->get_clock()->now();
+  fmt_logger.info("At {} I slept for {}", time, duration);
 
   rclcpp::shutdown();
   return EXIT_SUCCESS;
