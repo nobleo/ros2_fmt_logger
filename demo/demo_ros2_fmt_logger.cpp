@@ -78,6 +78,11 @@ int main(int argc, char ** argv)
   rclcpp::Time time = node->get_clock()->now();
   fmt_logger.info("At {} I slept for {}", time, duration);
 
+  std::cout << "\nInfo with rclcpp::Rate:" << std::endl;
+  rclcpp::Rate rate{10.0};
+  rclcpp::WallRate wall_rate{1.0 / 3};
+  fmt_logger.info("Rate: {}, WallRate: {:.2}", rate, wall_rate);
+
   rclcpp::shutdown();
   return EXIT_SUCCESS;
 }

@@ -114,6 +114,7 @@ The optional `rclcpp_formatters.hpp` header provides `fmt` formatters for common
 |---|---|
 | `rclcpp::Duration` | `0.8s`, `5s` |
 | `rclcpp::Time` | `2024-05-11 10:40:00` |
+| `rclcpp::(Wall)Rate` | `10Hz`, `0.5Hz` |
 
 ```cpp
 rclcpp::Duration duration{800ms};

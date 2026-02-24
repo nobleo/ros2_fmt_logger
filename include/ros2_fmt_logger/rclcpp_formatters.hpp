@@ -3,10 +3,14 @@
 #pragma once
 
 #include <fmt/chrono.h>
+#include <fmt/format.h>
 
 #include <chrono>
 #include <rclcpp/duration.hpp>
+#include <rclcpp/rate.hpp>
 #include <rclcpp/time.hpp>
+
+using std::chrono_literals::operator""s;
 
 /**
  * @brief fmt formatter for rclcpp::Duration.
@@ -53,4 +57,33 @@ struct fmt::formatter<rclcpp::Time>
       std::chrono::sys_time<std::chrono::nanoseconds>{std::chrono::nanoseconds{time.nanoseconds()}};
     return fmt::formatter<std::chrono::sys_time<std::chrono::nanoseconds>>::format(tp, ctx);
   }
+};
+
+/**
+ * @brief fmt formatter for rclcpp::Rate and rclcpp::WallRate.
+ *
+ * Formats the rate as a frequency in Hz. All fmt double format specs are
+ * supported, with "Hz" automatically appended.
+ *
+ * @example
+ * @code
+ * rclcpp::Rate rate{10.0};
+ * fmt::format("{}", rate);      // "10Hz"
+ * fmt::format("{:.2f}", rate);  // "10.00Hz"
+ * @endcode
+ */
+template <>
+struct fmt::formatter<rclcpp::Rate> : fmt::formatter<double>
+{
+  auto format(const rclcpp::Rate & rate, fmt::format_context & ctx) const
+  {
+    const auto hz = 1.0s / rate.period();
+    return fmt::format_to(fmt::formatter<double>::format(static_cast<double>(hz), ctx), "Hz");
+  }
+};
+
+// WallRate has the same formatting as Rate, so we can reuse the same formatter.
+template <>
+struct fmt::formatter<rclcpp::WallRate> : fmt::formatter<rclcpp::Rate>
+{
 };
