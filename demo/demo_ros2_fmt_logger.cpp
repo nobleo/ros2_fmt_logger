@@ -1,10 +1,11 @@
 // Copyright (C) 2025 Nobleo Autonomous Solutions B.V.
 
-#include <chrono>
+#include <chrono>  // IWYU pragma: keep
 #include <iostream>
 #include <rclcpp/node.hpp>
 #include <thread>
 
+#include "ros2_fmt_logger/rclcpp_formatters.hpp"  // IWYU pragma: keep
 #include "ros2_fmt_logger/ros2_fmt_logger.hpp"
 
 using std::chrono_literals::operator""ms;
@@ -70,6 +71,11 @@ int main(int argc, char ** argv)
     fmt_logger.fatal_on_change(
       temperature, 10.0, "Temperature changed significantly (> 10.0): {:.1f}°C", temperature);
   }
+
+  // ROS types:
+  std::cout << "\nInfo with rclcpp::Duration:" << std::endl;
+  rclcpp::Duration duration{800ms};
+  fmt_logger.info("Duration: {}", duration);
 
   rclcpp::shutdown();
   return EXIT_SUCCESS;
