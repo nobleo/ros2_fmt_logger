@@ -79,7 +79,7 @@ logger.error("Failed to connect to {}:{}", host, port);
 
 ## Format String Syntax
 
-Uses the powerful [fmt library](https://fmt.dev/latest/syntax.html) format syntax:
+Uses the powerful [fmt library](https://fmt.dev/latest/syntax) format syntax:
 
 ```cpp
 // Basic formatting
@@ -90,14 +90,41 @@ logger.info("Processing {1} of {0} items", total, current);
 
 // Format specifiers
 logger.info("Progress: {:.1}%", progress);  // Percentage with 1 decimal
-logger.info("Value: {:08.2f}", value);     // Zero-padded floating point
-logger.info("Hex: {:#x}", number);         // Hexadecimal with 0x prefix
+logger.info("Value: {:08.2f}", value);      // Zero-padded floating point
+logger.info("Hex: {:#x}", number);          // Hexadecimal with 0x prefix
 
 // Container formatting (requires fmt/ranges.h)
 logger.info("Values: {}", std::vector{1, 2, 3, 4});
 ```
 
 See [demo_ros2_fmt_logger.cpp](demo/demo_ros2_fmt_logger.cpp) for more examples.
+
+## ROS Type Formatting
+
+The optional `rclcpp_formatters.hpp` header provides `fmt` formatters for common ROS types:
+
+```cpp
+#include <ros2_fmt_logger/rclcpp_formatters.hpp>  // IWYU pragma: keep
+#include <ros2_fmt_logger/ros2_fmt_logger.hpp>
+```
+
+### Supported types
+
+| Type | Example output |
+|---|---|
+| `rclcpp::Duration` | `0.8s`, `5s` |
+| `rclcpp::Time` | `2024-05-11 10:40:00` |
+
+```cpp
+rclcpp::Duration duration{800ms};
+logger.info("Duration: {}", duration);  // "Duration: 0.8s"
+
+rclcpp::Time time = node->get_clock()->now();
+// Default human-readable format or custom fmt chrono format specifiers:
+logger.info("Default: {}", time);        // "Default: 2026-02-24 08:59:17"
+logger.info("Date: {:%Y-%m-%d}", time);  // "Date: 2026-02-24"
+```
+See [chrono-format-specifications](https://fmt.dev/latest/syntax/#chrono-format-specifications) for the supported format specifiers for `rclcpp::Time` and `rclcpp::Duration`.
 
 ## Alternatives
 
