@@ -54,7 +54,7 @@ target_link_libraries(your_target ros2_fmt_logger::ros2_fmt_logger)
 ### Include the header
 
 ```cpp
-#include <ros2_fmt_logger/ros2_fmt_logger.hpp>
+#include <ros2_fmt_logger/logger.hpp>
 ```
 
 ### Create a logger instance
@@ -104,8 +104,8 @@ See [demo_ros2_fmt_logger.cpp](demo/demo_ros2_fmt_logger.cpp) for more examples.
 The optional `rclcpp_formatters.hpp` header provides `fmt` formatters for common ROS types:
 
 ```cpp
+#include <ros2_fmt_logger/logger.hpp>
 #include <ros2_fmt_logger/rclcpp_formatters.hpp>  // IWYU pragma: keep
-#include <ros2_fmt_logger/ros2_fmt_logger.hpp>
 ```
 
 ### Supported types

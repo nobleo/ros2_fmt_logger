@@ -10,7 +10,7 @@
 #include <sstream>
 #include <thread>
 
-#include "ros2_fmt_logger/ros2_fmt_logger.hpp"
+#include "ros2_fmt_logger/logger.hpp"
 
 using std::chrono_literals::operator""ms;
 

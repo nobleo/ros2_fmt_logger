@@ -5,8 +5,8 @@
 #include <rclcpp/node.hpp>
 #include <thread>
 
+#include "ros2_fmt_logger/logger.hpp"
 #include "ros2_fmt_logger/rclcpp_formatters.hpp"  // IWYU pragma: keep
-#include "ros2_fmt_logger/ros2_fmt_logger.hpp"
 
 using std::chrono_literals::operator""ms;
 
