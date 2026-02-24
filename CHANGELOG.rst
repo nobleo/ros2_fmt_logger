@@ -2,8 +2,8 @@
 Changelog for package ros2_fmt_logger
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.1.0 (2026-02-24)
+------------------
 * Logger class in logger.hpp
 * Implement formatter for (Wall)Rate
 * Implement formatter for rclcpp::Time
