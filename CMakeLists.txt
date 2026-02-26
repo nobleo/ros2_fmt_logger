@@ -41,6 +41,11 @@ install(DIRECTORY include/
   DESTINATION include
 )
 
+# Install the README
+install(FILES README.md
+  DESTINATION share/${PROJECT_NAME}
+)
+
 # Export the target so it can be used by other packages
 ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 ament_export_dependencies(rclcpp rcutils fmt)
@@ -69,8 +74,6 @@ if(BUILD_TESTING)
   )
 endif()
 
-if(ament_cmake_auto_VERSION VERSION_LESS 2.7)  # Can be removed after Jazzy EOL or https://github.com/ament/ament_cmake/pull/596
-  ament_auto_package(USE_SCOPED_HEADER_INSTALL_DIR)
-else()
-  ament_auto_package()
-endif()
+ament_auto_package(
+  USE_SCOPED_HEADER_INSTALL_DIR  # Can be removed after Jazzy EOL
+)
