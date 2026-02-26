@@ -58,7 +58,7 @@ public:
    * @brief Construct a Logger from an existing rclcpp::Logger
    * @param logger The rclcpp::Logger to extend
    */
-  explicit Logger(const rclcpp::Logger & logger) : rclcpp::Logger{logger} {}
+  explicit(false) Logger(const rclcpp::Logger & logger) : rclcpp::Logger{logger} {}
 
   /**
    * @brief Construct a Logger with a specific clock for throttling features
