@@ -113,7 +113,7 @@ The optional `rclcpp_formatters.hpp` header provides `fmt` formatters for common
 | Type | Example output |
 |---|---|
 | `rclcpp::Duration` | `0.8s`, `5s` |
-| `rclcpp::Time` | `2024-05-11 10:40:00` |
+| `rclcpp::Time` | `2026-06-03 08:59:17` |
 | `rclcpp::(Wall)Rate` | `10Hz`, `0.5Hz` |
 
 ```cpp
@@ -122,9 +122,10 @@ logger.info("Duration: {}", duration);  // "Duration: 0.8s"
 
 rclcpp::Time time = node->get_clock()->now();
 // Default human-readable format or custom fmt chrono format specifiers:
-logger.info("Default: {}", time);        // "Default: 2026-02-24 08:59:17"
-logger.info("Date: {:%Y-%m-%d}", time);  // "Date: 2026-02-24"
+logger.info("Default: {}", time);        // "Default: 2026-06-03 08:59:17"
+logger.info("Date: {:%Y-%m-%d}", time);  // "Date: 2026-06-03"
 ```
+
 See [chrono-format-specifications](https://fmt.dev/latest/syntax/#chrono-format-specifications) for the supported format specifiers for `rclcpp::Time` and `rclcpp::Duration`.
 
 ## Alternatives
