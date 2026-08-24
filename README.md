@@ -4,6 +4,16 @@
 
 A modern, ROS 2 logging library that provides fmt-style formatting as a replacement for RCLCPP logging macros.
 
+[![License](https://img.shields.io/github/license/nobleo/ros2_fmt_logger)](https://github.com/nobleo/ros2_fmt_logger/blob/master/LICENSE.md)
+[![C++ Standard](https://img.shields.io/badge/C%2B%2B-20%2F23%2F26-blue)](https://en.cppreference.com/w/cpp/compiler_support#cpp20)
+[![CI](https://github.com/nobleo/ros2_fmt_logger/actions/workflows/actions.yml/badge.svg)](https://github.com/nobleo/ros2_fmt_logger/actions/workflows/actions.yml)
+
+[![Build Status](https://build.ros2.org/buildStatus/icon?job=Hbin_uJ64__ros2_fmt_logger__ubuntu_jammy_amd64__binary&subject=Humble)](https://build.ros2.org/job/Hbin_uJ64__ros2_fmt_logger__ubuntu_jammy_amd64__binary/)
+[![Build Status](https://build.ros2.org/buildStatus/icon?job=Jbin_uN64__ros2_fmt_logger__ubuntu_noble_amd64__binary&subject=Jazzy)](https://build.ros2.org/view/Jbin_uN64/job/Jbin_uN64__ros2_fmt_logger__ubuntu_noble_amd64__binary/)
+[![Build Status](https://build.ros2.org/buildStatus/icon?job=Kbin_uN64__ros2_fmt_logger__ubuntu_noble_amd64__binary&subject=Kilted)](https://build.ros2.org/job/Kbin_uN64__ros2_fmt_logger__ubuntu_noble_amd64__binary/)
+[![Build Status](https://build.ros2.org/buildStatus/icon?job=Lbin_uR64__ros2_fmt_logger__ubuntu_resolute_amd64__binary&subject=Lyrical)](https://build.ros2.org/job/Lbin_uR64__ros2_fmt_logger__ubuntu_resolute_amd64__binary/)
+[![Build Status](https://build.ros2.org/buildStatus/icon?job=Rbin_uR64__ros2_fmt_logger__ubuntu_resolute_amd64__binary&subject=Rolling)](https://build.ros2.org/job/Rbin_uR64__ros2_fmt_logger__ubuntu_resolute_amd64__binary/)
+
 ## Features
 
 - Function calls instead of macros: `logger.info("Hello, {}!", name)` instead of `RCLCPP_INFO(logger, "Hello, %s", name.c_str())`
@@ -110,11 +120,11 @@ The optional `rclcpp_formatters.hpp` header provides `fmt` formatters for common
 
 ### Supported types
 
-| Type | Example output |
-|---|---|
-| `rclcpp::Duration` | `0.8s`, `5s` |
-| `rclcpp::Time` | `2026-06-03 08:59:17` |
-| `rclcpp::(Wall)Rate` | `10Hz`, `0.5Hz` |
+| Type                 | Example output        |
+| -------------------- | --------------------- |
+| `rclcpp::Duration`   | `0.8s`, `5s`          |
+| `rclcpp::Time`       | `2026-06-03 08:59:17` |
+| `rclcpp::(Wall)Rate` | `10Hz`, `0.5Hz`       |
 
 ```cpp
 rclcpp::Duration duration{800ms};
