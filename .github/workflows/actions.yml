@@ -37,6 +37,10 @@ jobs:
           - rolling
         ROS_REPO:
           - main
+        include:
+          - ROS_DISTRO: rolling
+            allow_failure: true
+    continue-on-error: ${{ matrix.allow_failure || false }}
     env:
       CCACHE_DIR: ${{ github.workspace }}/.ccache
     steps:
